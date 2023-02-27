@@ -1,23 +1,24 @@
 const Experiment = class {
   constructor(
-    id,
-    type,
-    name,
-    start_date,
-    end_date,
-    is_running,
-    user_percentage,
-    variantArr
+    // id,
+    // type_id,
+    // name,
+    // start_date,
+    // end_date,
+    // is_running,
+    // user_percentage,
+    // variantArr
+    obj
   ) {
-    this.id = id;
-    this.type = type;
-    this.name = name;
+    this.id = obj.id;
+    this.type_id = obj.type_id;
+    this.name = obj.name;
 
-    this.startDate = start_date;
-    this.endDate = end_date;
-    this.isRunning = is_running;
-    this.userPercentage = user_percentage;
-    this.variants = variantArr || [];
+    this.startDate = obj.start_date;
+    this.endDate = obj.end_date;
+    this.isRunning = obj.is_running;
+    this.userPercentage = Number(obj.user_percentage);
+    this.variantArr = obj.variantArr || [];
   }
 };
 

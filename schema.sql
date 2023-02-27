@@ -11,12 +11,12 @@ CREATE TABLE types (
 
 CREATE TABLE experiments (
   id serial PRIMARY KEY,
-  type int NOT NULL REFERENCES types(id),
+  type_id int NOT NULL REFERENCES types(id),
   name text NOT NULL UNIQUE,
   start_date date NOT NULL,
   end_date date NOT NULL,
   is_running boolean DEFAULT false,
-  user_percentage numeric NOT NULL DEFAULT 1.0 CHECK (user_percentage BETWEEN 0.0 AND 1.0)
+  user_percentage decimal NOT NULL DEFAULT 1.0 CHECK (user_percentage BETWEEN 0.0 AND 1.0)
 );
 
 CREATE TABLE variants (
@@ -24,7 +24,7 @@ CREATE TABLE variants (
   experiment_id int NOT NULL REFERENCES experiments(id) ON DELETE CASCADE,
   value text NOT NULL,
   is_control boolean DEFAULT false,
-  weight numeric NOT NULL DEFAULT 0.5 CHECK (weight BETWEEN 0.0 AND 1.0)
+  weight decimal NOT NULL DEFAULT 0.5 CHECK (weight BETWEEN 0.0 AND 1.0)
 );
 
 CREATE TABLE users (
