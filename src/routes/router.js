@@ -1,7 +1,7 @@
-import { hello } from "../controllers/controller.js";
 import express from "express";
+import { createExperiment } from "../controllers/controller.js";
 const router = express.Router();
 
-router.get("/", hello);
+router.post("/api/experiment", createExperiment);
 
 export default router;
