@@ -16,12 +16,25 @@ pgClient.on("error", (err, client) => {
 async function createExperiment(req, res) {
   const { name, type, startDate, endDate, running, percentage } = req.body;
 
+  let newID;
+  let allData;
+
   const client = await pgClient.connect();
   try {
     const response = await client.query(
-      "INSERT INTO experiments (type, name, start_date, end_date, isRunning, userPercentage) VALUES ($1, $2, $3, $4, $5, $6)",
+      "INSERT INTO experiments (type, name, start_date, end_date, is_running, user_percentage) VALUES ($1, $2, $3, $4, $5, $6)",
       [type, name, startDate, endDate, running, percentage]
     );
+    // newID = await client.query("SELECT id FROM experiments WHERE name = $1", [
+    //   name,
+    // ]);
+    // newID = newID.rows[0];
+    allData = await client.query("SELECT * FROM experiments WHERE name = $1", [
+      name,
+    ]);
+    allData = allData.rows[0];
+    // console.log("newID of experiment", newID);
+    console.log("all data in experiment", allData);
     res.status(200).json(`New experiment created`);
   } catch (error) {
     res.status(403).json("Error in creating the experiment in postgres");
@@ -29,6 +42,16 @@ async function createExperiment(req, res) {
   } finally {
     client.release();
   }
+
+  return new Experiment(
+    allData,
+    type,
+    name,
+    startDate,
+    endDate,
+    running,
+    percentage
+  );
 }
 
 // const uniquePath = generateUniquePath();

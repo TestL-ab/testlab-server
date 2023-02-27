@@ -15,15 +15,15 @@ CREATE TABLE experiments (
   name text NOT NULL UNIQUE,
   start_date date NOT NULL,
   end_date date NOT NULL,
-  isRunning boolean DEFAULT false,
-  userPercentage numeric NOT NULL DEFAULT 1.0 CHECK (userPercentage BETWEEN 0.0 AND 1.0)
+  is_running boolean DEFAULT false,
+  user_percentage numeric NOT NULL DEFAULT 1.0 CHECK (user_percentage BETWEEN 0.0 AND 1.0)
 );
 
 CREATE TABLE variants (
   id serial PRIMARY KEY,
   experiment_id int NOT NULL REFERENCES experiments(id) ON DELETE CASCADE,
   value text NOT NULL,
-  isControl boolean DEFAULT false,
+  is_control boolean DEFAULT false,
   weight numeric NOT NULL DEFAULT 0.5 CHECK (weight BETWEEN 0.0 AND 1.0)
 );
 
