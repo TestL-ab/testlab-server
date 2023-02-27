@@ -30,13 +30,9 @@ async function createExperiment(req, res) {
       name,
     ]);
     allData = allData.rows[0];
-    //console.log(allData);
-
-    // console.log("all data in experiment", allData);
-    let returnValue = new Experiment(allData);
-    console.log("returnValue", { returnValue });
-    // res.json(returnValue)
-    res.status(200).json(returnValue);
+    let newExperiment = new Experiment(allData);
+    console.log("New experiment passed back", newExperiment);
+    res.status(200).json(newExperiment);
   } catch (error) {
     res.status(403).json("Error in creating the experiment in postgres");
     console.log(error.stack);

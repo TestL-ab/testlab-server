@@ -1,15 +1,5 @@
 const Experiment = class {
-  constructor(
-    // id,
-    // type_id,
-    // name,
-    // start_date,
-    // end_date,
-    // is_running,
-    // user_percentage,
-    // variantArr
-    obj
-  ) {
+  constructor(obj) {
     this.id = obj.id;
     this.type_id = obj.type_id;
     this.name = obj.name;
