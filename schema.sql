@@ -43,3 +43,5 @@ CREATE TABLE events (
 INSERT INTO types (type)
 VALUES ('toggle'), ('rollout'), ('experiment');
 
+
+
