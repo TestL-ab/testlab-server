@@ -51,8 +51,6 @@ async function createVariants(req, res) {
       let variant = variantArr[i];
       let newVar = await createVariant(variant, req, res);
       addedVariants.push(newVar);
-      // push to array
-      // return new variant array
     }
     res.status(200).json({ variants: addedVariants, text: "Made it" });
   } catch (error) {
