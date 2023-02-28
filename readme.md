@@ -6,3 +6,5 @@ createdb TestLab
 
 To set up database:
 psql -d TestLab < schema.sql
+
+minor change
