@@ -29,26 +29,17 @@ async function getEvents(req, res) {
 async function getEventsForExperiment(req,res) {}
 
 async function createEvent(req, res) {
-  const { name, type_id, start_date, end_date, is_running, user_percentage } = req.body;
+  const { variant_id, user_id } = req.body;
 
   const client = await pgClient.connect();
   try {
     const response = await client.query(
-      "INSERT INTO experiments (type_id, name, start_date, end_date, is_running, user_percentage) VALUES ($1, $2, $3, $4, $5, $6)",
-      [type_id, name, start_date, end_date, is_running, user_percentage]
+      "INSERT INTO events (variant_id, user_id) VALUES ($1, $2)",
+      [variant_id, user_id]
     );
-
-    let allData = await client.query(
-      "SELECT * FROM experiments WHERE name = $1",
-      [name]
-    );
-
-    allData = allData.rows[0];
-    let newExperiment = new Experiment(allData);
-    console.log("New experiment passed back", newExperiment);
-    res.status(200).json(newExperiment);
+    res.status(200).json("Event added to database.");
   } catch (error) {
-    res.status(403).json("Error in creating the experiment in postgres");
+    res.status(403).json("Error in creating the event in postgres");
     console.log(error.stack);
   } finally {
     client.release();
