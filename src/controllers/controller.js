@@ -9,12 +9,8 @@ pgClient.on("error", (err, client) => {
   process.exit(-1);
 });
 
-//
-
 async function createExperiment(req, res) {
   const { name, type_id, start_date, end_date, is_running, user_percentage } = req.body;
-
-  // let allData;
 
   const client = await pgClient.connect();
   try {
@@ -34,6 +30,24 @@ async function createExperiment(req, res) {
     res.status(200).json(newExperiment);
   } catch (error) {
     res.status(403).json("Error in creating the experiment in postgres");
+    console.log(error.stack);
+  } finally {
+    client.release();
+  }
+}
+
+async function deleteExperiment(req, res) {
+  const id = req.params.id;
+
+  const client = await pgClient.connect();
+  try {
+    const response = await client.query(
+      "DELETE FROM experiments WHERE (id = $1)",
+      [id]
+    );s
+    res.status(200).json(`Experiment with id ${id} successfully deleted.`)
+  } catch (error) {
+    res.status(400).json("Error in deleting the experiment in postgres");
     console.log(error.stack);
   } finally {
     client.release();
@@ -104,4 +118,4 @@ async function createVariant(ob, req, res) {
 
 function updateVariants() {}
 
-export { createExperiment, updateExperiment, createVariants, updateVariants };
+export { createExperiment, updateExperiment, deleteExperiment, createVariants, updateVariants };
