@@ -3,4 +3,4 @@ psql -d TestLab < schema.sql
 Making a change so that git picks up the change...
 
 
-Making change to readme to see if this works....more changes!!!!! WOOOO
+Making change to readme to see if this works....more changes!!!!! WOOOO! SO AWESOME!!!
