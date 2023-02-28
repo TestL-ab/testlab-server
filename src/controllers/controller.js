@@ -44,7 +44,7 @@ async function deleteExperiment(req, res) {
     const response = await client.query(
       "DELETE FROM experiments WHERE (id = $1)",
       [id]
-    );s
+    );
     res.status(200).json(`Experiment with id ${id} successfully deleted.`)
   } catch (error) {
     res.status(400).json("Error in deleting the experiment in postgres");
@@ -57,26 +57,34 @@ async function deleteExperiment(req, res) {
 async function updateExperiment(req, res) {}
 
 async function createVariants(req, res) {
+  let id = req.params.id;
+  const client = await pgClient.connect();
   try {
     let variantArr = req.body.variants;
+    console.log("variant array: ", variantArr);
 
-    let addedVariants = [];
     for (let i = 0; i < variantArr.length; i++) {
       let variant = variantArr[i];
-      let newVar = await createVariant(variant, req, res);
-      addedVariants.push(newVar);
+      await createVariant(variant);
     }
-    res.status(200).json({ variants: addedVariants, text: "Made it" });
+    const response = await client.query(
+      "SELECT * from variants WHERE experiment_id = $1", [id]
+    );
+    let addVariants = response.rows
+    res.status(200).json({ variants: addVariants, text: "Made it" });
   } catch (error) {
+
+    // await client.query("DELETE FROM variants WHERE experiment_id = $1", [id])
+
     res.status(403).json("Error in creating the variants in postgres");
     console.log(error.stack);
   } finally {
-    //client.release();
+    client.release();
   }
 }
 /*
 {
-  "varients": [
+  "variants": [
     {
       "experiment_id" : 16,
       "value": "blue",
@@ -93,26 +101,20 @@ async function createVariants(req, res) {
 }
 */
 
-async function createVariant(ob, req, res) {
+async function createVariant(obj) {
+  console.log("We made it to line 98")
+  console.log("var obj", obj)
   const client = await pgClient.connect();
   try {
-    return {};
-    // const response = await client.query(
-    //   "INSERT INTO experiments (type_id, name, start_date, end_date, is_running, user_percentage) VALUES ($1, $2, $3, $4, $5, $6)",
-    //   [type_id, name, startDate, endDate, running, percentage]
-    // );
-    // allData = await client.query("SELECT * FROM experiments WHERE name = $1", [
-    //   name,
-    // ]);
-    // allData = allData.rows[0];
-    // let newExperiment = new Experiment(allData);
-    // console.log("New experiment passed back", newExperiment);
-    // res.status(200).json(newExperiment);
+    const response = await client.query(
+      "INSERT INTO variants (experiment_id, value, is_control, weight) VALUES ($1, $2, $3, $4)", [obj.experiment_id, obj.value, obj.is_control, obj.weight]
+    );
+
+    return;
   } catch (error) {
-    res.status(403).json("Error in updating the experiment in postgres");
-    console.log(error.stack);
+    throw new Error("Error creating Variant")
   } finally {
-    //client.release();
+    client.release();
   }
 }
 
