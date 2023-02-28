@@ -15,7 +15,7 @@ CREATE TABLE experiments (
   name text NOT NULL UNIQUE,
   start_date date NOT NULL,
   end_date date NOT NULL,
-  is_running boolean DEFAULT false,
+  is_running boolean DEFAULT false NOT NULL,
   user_percentage decimal NOT NULL DEFAULT 1.0 CHECK (user_percentage BETWEEN 0.0 AND 1.0)
 );
 

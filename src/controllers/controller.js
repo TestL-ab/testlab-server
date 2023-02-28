@@ -12,7 +12,7 @@ pgClient.on("error", (err, client) => {
 //
 
 async function createExperiment(req, res) {
-  const { name, type_id, startDate, endDate, running, percentage } = req.body;
+  const { name, type_id, start_date, end_date, is_running, user_percentage } = req.body;
 
   // let allData;
 
@@ -20,7 +20,7 @@ async function createExperiment(req, res) {
   try {
     const response = await client.query(
       "INSERT INTO experiments (type_id, name, start_date, end_date, is_running, user_percentage) VALUES ($1, $2, $3, $4, $5, $6)",
-      [type_id, name, startDate, endDate, running, percentage]
+      [type_id, name, start_date, end_date, is_running, user_percentage]
     );
 
     let allData = await client.query(
