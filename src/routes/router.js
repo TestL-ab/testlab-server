@@ -29,13 +29,10 @@ router.post("/api/experiment/:id/variants", createVariants);
 // dummy route
 router.put("/api/experiment/:id/variants", updateVariants);
 
-// dummy route <- MVP
 router.post("/api/events", createEvent);
-
 
 router.get("/api/events", getEvents);
 
-// dummy route <- MVP
 router.get("/api/events/experiment/:id", getEventsForExperiment);
 
 router.get("/api/users", getUsers);
