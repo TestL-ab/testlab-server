@@ -9,6 +9,54 @@ pgClient.on("error", (err, client) => {
   process.exit(-1);
 });
 
+async function getExperiments(req, res) {
+  const client = await pgClient.connect();
+  try {
+    const response = await client.query(
+      "SELECT * FROM experiments"
+    );
+    let experimentsArr = response.rows.map(exp => {
+      return new Experiment(exp);
+    })
+    // iterate over experimentArr to tun into new experiment objects
+    for (let i = 0; i < experimentsArr.length; i++) {
+      let variants = await getVariants(experimentsArr[i].id);
+      if (variants === false) throw new Error("Error getting variants");
+      console.log("variants", variants)
+      experimentsArr[i].variant_arr = variants.map(variant => {
+        return new Variant(variant);
+      });
+    }
+
+    console.log("List of Experiments passed back", experimentsArr);
+    res.status(200).json(experimentsArr);
+  } catch (error) {
+    res.status(403).json("Error getting the experiment in postgres");
+    console.log(error.stack);
+  } finally {
+    client.release();
+  }
+}
+
+async function getVariants(experiment_id) {
+  const client = await pgClient.connect();
+  try {
+    const response = await client.query(
+      "SELECT * FROM variants WHERE experiment_id = $1", [experiment_id]
+    )
+    let variant_arr = response.rows
+    console.log(`Variants for experiment ${experiment_id}`, variant_arr)
+    return variant_arr
+  } catch (error) {
+
+    console.log(error.stack);
+    return(false);
+  } finally {
+    client.release();
+  }
+}
+
+
 async function createExperiment(req, res) {
   const { name, type_id, start_date, end_date, is_running, user_percentage } = req.body;
 
@@ -60,11 +108,11 @@ async function createVariants(req, res) {
   let id = req.params.id;
   const client = await pgClient.connect();
   try {
-    let variantArr = req.body.variants;
-    console.log("variant array: ", variantArr);
+    let variant_arr = req.body.variants;
+    console.log("variant array: ", variant_arr);
 
-    for (let i = 0; i < variantArr.length; i++) {
-      let variant = variantArr[i];
+    for (let i = 0; i < variant_arr.length; i++) {
+      let variant = variant_arr[i];
       if (variant.experiment_id != id) throw new Error("Experiment Id doesn't match.")
       await createVariant(variant);
     }
@@ -85,24 +133,6 @@ async function createVariants(req, res) {
     client.release();
   }
 }
-/*
-{
-  "variants": [
-    {
-      "experiment_id" : 16,
-      "value": "blue",
-      "is_control": true,
-      "weight": 0.5
-    },
-    {
-      "experiment_id" : 16,
-      "value": "red",
-      "is_control": false,
-      "weight": 0.5
-    }
-  ]
-}
-*/
 
 async function createVariant(obj) {
   console.log("We made it to line 98")
@@ -123,4 +153,4 @@ async function createVariant(obj) {
 
 function updateVariants() {}
 
-export { createExperiment, updateExperiment, deleteExperiment, createVariants, updateVariants };
+export { getExperiments, createExperiment, updateExperiment, deleteExperiment, createVariants, updateVariants };
