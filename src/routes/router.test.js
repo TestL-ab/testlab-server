@@ -5,14 +5,6 @@ import app from "../app.js"
 const baseURL = "http://localhost:3000/api"
 
 describe("GET /experiment", () => {
-  const newExperiment = {
-    "type_id": 3,
-    "name": "100_experiment",
-    "start_date": "2/23/23",
-    "end_date": "2/23/24",
-    "is_running": true,
-    "user_percentage": 0.5
-  }
 
   test( "testing GET /experiment", async () => {
 
@@ -23,4 +15,8 @@ describe("GET /experiment", () => {
         expect(response.body.length >= 1).toBe(true);
       })
   })
+
+  // afterAll(async () => {
+  //   await new Promise(resolve => setTimeout(() => resolve(), 4000)); // avoid jest open handle error
+  // });
 });
