@@ -2,7 +2,15 @@ import pg from "pg";
 import config from "../utils/config.js";
 //import { Experiment, Variant } from "../models/experiment.js";
 
-const pgClient = new pg.Pool({ database: config.PG_DATABASE });
+//const pgClient = new pg.Pool({ database: config.PG_DATABASE });
+const pgClient = new pg.Pool({
+  host: config.DB_HOST,
+  port: 5432,
+  user: "postgres",
+  password: "password",
+  database: config.PG_DATABASE,
+});
+
 pgClient.on("error", (err, client) => {
   console.error("Unexpected error on idle client", err);
   process.exit(-1);
@@ -11,10 +19,8 @@ pgClient.on("error", (err, client) => {
 async function getEvents(req, res) {
   const client = await pgClient.connect();
   try {
-    const response = await client.query(
-      "SELECT * FROM events"
-    );
-    let eventsArr = response.rows
+    const response = await client.query("SELECT * FROM events");
+    let eventsArr = response.rows;
 
     console.log("List of Events passed back", eventsArr);
     res.status(200).json(eventsArr);
@@ -31,7 +37,8 @@ async function getEventsForExperiment(req, res) {
   const id = req.params.id; //experiment id; event table does not have experiment id column
   try {
     const response = await client.query(
-      "SELECT * FROM events INNER JOIN variants ON events.variant_id = variants.id WHERE variants.experiment_id = $1", [id]
+      "SELECT * FROM events INNER JOIN variants ON events.variant_id = variants.id WHERE variants.experiment_id = $1",
+      [id]
     );
     let eventsArr = response.rows;
 
@@ -48,7 +55,7 @@ async function getEventsForExperiment(req, res) {
 async function createEvent(req, res) {
   const { variant_id, user_id } = req.body;
 
-  console.log("req body", req.body)
+  console.log("req body", req.body);
 
   const client = await pgClient.connect();
   try {
@@ -65,4 +72,4 @@ async function createEvent(req, res) {
   }
 }
 
-export { getEvents, getEventsForExperiment, createEvent};
+export { getEvents, getEventsForExperiment, createEvent };

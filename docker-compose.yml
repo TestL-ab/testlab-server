@@ -1,0 +1,23 @@
+version: "3"
+services:
+  server:
+    container_name: "server"
+    build: ./
+    ports:
+      - "3000:3000"
+    environment:
+      DB_HOST: database
+    depends_on:
+      - database
+  database:
+    image: "postgres:12"
+    container_name: "postgres"
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: "TestLab"
+      POSTGRES_PASSWORD: "password"
+    volumes:
+      - database-data:/var/lib/postgresql/data/
+volumes:
+  database-data:

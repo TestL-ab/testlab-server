@@ -2,7 +2,15 @@ import pg from "pg";
 import config from "../utils/config.js";
 import { Experiment, Variant } from "../models/experiment.js";
 
-const pgClient = new pg.Pool({ database: config.PG_DATABASE });
+//const pgClient = new pg.Pool({ database: config.PG_DATABASE });
+const pgClient = new pg.Pool({
+  host: config.DB_HOST,
+  port: 5432,
+  user: "postgres",
+  password: "password",
+  database: config.PG_DATABASE,
+});
+
 pgClient.on("error", (err, client) => {
   console.error("Unexpected error on idle client", err);
   process.exit(-1);
@@ -11,10 +19,8 @@ pgClient.on("error", (err, client) => {
 async function getUsers(req, res) {
   const client = await pgClient.connect();
   try {
-    const response = await client.query(
-      "SELECT * FROM users"
-    );
-    let usersArr = response.rows
+    const response = await client.query("SELECT * FROM users");
+    let usersArr = response.rows;
 
     console.log("List of Users passed back", usersArr);
     res.status(200).json(usersArr);
@@ -36,10 +42,9 @@ async function createUser(req, res) {
       [id, variant_id, ip_address]
     );
 
-    let userData = await client.query(
-      "SELECT * FROM users WHERE id = $1",
-      [id]
-    );
+    let userData = await client.query("SELECT * FROM users WHERE id = $1", [
+      id,
+    ]);
 
     let newUser = userData.rows[0];
     console.log("New User passed back", newUser);
