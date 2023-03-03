@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
 
-    "test": "jest --detectOpenHandles",
+    "test": "jest --forceExit",
     "start": "nodemon --exec babel-node src/index.js"
   },
   "author": "",
