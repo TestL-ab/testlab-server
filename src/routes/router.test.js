@@ -33,3 +33,31 @@ describe("post /experiment", () => {
     await supertest(app).delete(`/api/experiment/${testID}`)
   })
 });
+
+describe("testing deleting experiments", () => {
+
+  test( "testing POST /experiment", async () => {
+
+    let newExperiment = {
+      "type_id": 3,
+      "name": "test_experiment",
+      "start_date": "2/23/23",
+      "end_date": "2/23/24",
+      "is_running": true,
+      "user_percentage": 0.5
+    }
+
+    let response = await supertest(app).post("/api/experiment").send(newExperiment);
+    let testID = response.body.id
+
+    await supertest(app).delete(`/api/experiment/${testID}`)
+
+    response = await supertest(app).get("/api/experiment")
+    let experiments = response.body
+    expect(
+      experiments.filter( exp => exp.name === "test_experiment").length
+    ).toBe(0)
+
+
+  })
+});
