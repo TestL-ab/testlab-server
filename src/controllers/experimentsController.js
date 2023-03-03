@@ -2,14 +2,14 @@ import pg from "pg";
 import config from "../utils/config.js";
 import { Experiment, Variant } from "../models/experiment.js";
 
-const pgClient = new pg.Pool({ database: config.PG_DATABASE });
-// const pgClient = new pg.Pool({
-//   host: config.PG_HOST,
-//   port: 5432,
-//   user: config.PG_USERNAME,
-//   password: config.PG_PASSWORD,
-//   database: config.PG_DATABASE,
-// });
+// const pgClient = new pg.Pool({ database: config.PG_DATABASE });
+const pgClient = new pg.Pool({
+  host: config.PG_HOST,
+  port: 5432,
+  user: config.PG_USERNAME,
+  password: config.PG_PASSWORD,
+  database: config.PG_DATABASE,
+});
 
 pgClient.on("error", (err, client) => {
   console.error("Unexpected error on idle client", err);
