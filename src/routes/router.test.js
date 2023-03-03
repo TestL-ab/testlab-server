@@ -53,11 +53,11 @@ describe("testing deleting experiments", () => {
     await supertest(app).delete(`/api/experiment/${testID}`)
 
     response = await supertest(app).get("/api/experiment")
-    let experiments = response.body
     expect(
-      experiments.filter( exp => exp.name === "test_experiment").length
+      response
+        .body
+        .filter( exp => exp.name === "test_experiment")
+        .length
     ).toBe(0)
-
-
   })
 });
