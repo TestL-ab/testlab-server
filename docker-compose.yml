@@ -6,7 +6,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      DB_HOST: database
+      PG_HOST: database
     depends_on:
       - database
   database:
@@ -15,9 +15,11 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_DB: "TestLab"
-      POSTGRES_PASSWORD: "password"
+      POSTGRES_DB: ${PG_DATABASE}
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
     volumes:
       - database-data:/var/lib/postgresql/data/
+    env_file:
+      - .env
 volumes:
   database-data:
