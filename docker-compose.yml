@@ -15,9 +15,6 @@ services:
   database:
     image: public.ecr.aws/l4e5z4f8/testlab/postgres
     container_name: "postgres"
-    build:
-      context: ./pg
-      dockerfile: Dockerfile
     ports:
       - "5432:5432"
     environment:
