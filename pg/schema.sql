@@ -1,3 +1,7 @@
+CREATE DATABASE TestLab;
+
+\c TestLab
+
 DROP TABLE IF EXISTS events;
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS variants;

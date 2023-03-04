@@ -1,8 +1,11 @@
 version: "3"
 services:
   server:
+    image: public.ecr.aws/l4e5z4f8/testlab/server
     container_name: "server"
-    build: ./
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "3000:3000"
     environment:
@@ -10,8 +13,11 @@ services:
     depends_on:
       - database
   database:
-    image: "postgres:12"
+    image: public.ecr.aws/l4e5z4f8/testlab/postgres
     container_name: "postgres"
+    build:
+      context: ./pg
+      dockerfile: Dockerfile
     ports:
       - "5432:5432"
     environment:
