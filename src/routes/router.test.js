@@ -20,7 +20,7 @@ beforeEach( async() => {
     "variants": [
       {
         "experiment_id" : 5,
-        "value": "red",
+        "value": "blue",
       },
       {
         "experiment_id" : 5,
@@ -101,6 +101,12 @@ describe("Variants API", () => {
     response = await supertest(app).post(`/api/experiment/${testID}/variants`).send(newVariants);
     expect(response.status).toEqual(403)
     expect(response.body).toEqual("Error in creating the variants in postgres")
+  })
+
+  test( "testing varient defaults", async ()=> {
+    newVariants.variants.forEach(variant => variant.experiment_id = testID)
+    response = await supertest(app).post(`/api/experiment/${testID}/variants`).send(newVariants);
+    expect(response.status).toEqual(200)
   })
 
   test( "testing create variant" , async () => {

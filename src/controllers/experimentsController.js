@@ -22,13 +22,13 @@ async function getExperiments(req, res) {
     for (let i = 0; i < experimentsArr.length; i++) {
       let variants = await getVariants(experimentsArr[i].id);
       if (variants === false) throw new Error("Error getting variants");
-      console.log("variants", variants)
+      // console.log("variants", variants)
       experimentsArr[i].variant_arr = variants.map(variant => {
         return new Variant(variant);
       });
     }
 
-    console.log("List of Experiments passed back", experimentsArr);
+    // console.log("List of Experiments passed back", experimentsArr);
     res.status(200).json(experimentsArr);
   } catch (error) {
     res.status(403).json("Error getting the experiment in postgres");
@@ -45,7 +45,7 @@ async function getVariants(experiment_id) {
       "SELECT * FROM variants WHERE experiment_id = $1", [experiment_id]
     )
     let variant_arr = response.rows
-    console.log(`Variants for experiment ${experiment_id}`, variant_arr)
+    // console.log(`Variants for experiment ${experiment_id}`, variant_arr)
     return variant_arr
   } catch (error) {
 
@@ -74,7 +74,7 @@ async function createExperiment(req, res) {
 
     allData = allData.rows[0];
     let newExperiment = new Experiment(allData);
-    console.log("New experiment passed back", newExperiment);
+    // console.log("New experiment passed back", newExperiment);
     res.status(200).json(newExperiment);
   } catch (error) {
     res.status(403).json("Error in creating the experiment in postgres");
@@ -109,7 +109,7 @@ async function createVariants(req, res) {
   const client = await pgClient.connect();
   try {
     let variant_arr = req.body.variants;
-    console.log("variant array: ", variant_arr);
+    // console.log("variant array: ", variant_arr);
 
     for (let i = 0; i < variant_arr.length; i++) {
       let variant = variant_arr[i];
@@ -135,8 +135,8 @@ async function createVariants(req, res) {
 }
 
 async function createVariant(obj) {
-  console.log("We made it to line 98")
-  console.log("var obj", obj)
+  if (obj.weight === undefined) obj.weight = 0.5
+  if (obj.is_control === undefined) obj.is_control = false
   const client = await pgClient.connect();
   try {
     const response = await client.query(
