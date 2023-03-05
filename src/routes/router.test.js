@@ -85,6 +85,17 @@ describe("Experiments API", () => {
         .length
     ).toBe(0)
   })
+
+  test( "testing creating experiment with defaults", async () => {
+    delete newExperiment.is_running
+    delete newExperiment.user_percentage
+
+    response = await supertest(app).post("/api/experiment").send(newExperiment);
+    let testID = response.body.id
+    expect(response.status).toBe(200)
+
+    await supertest(app).delete(`/api/experiment/${testID}`)
+  })
 });
 
 describe("Variants API", () => {

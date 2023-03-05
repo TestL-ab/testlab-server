@@ -58,7 +58,9 @@ async function getVariants(experiment_id) {
 
 
 async function createExperiment(req, res) {
-  const { name, type_id, start_date, end_date, is_running, user_percentage } = req.body;
+  let { name, type_id, start_date, end_date, is_running, user_percentage } = req.body;
+  if (is_running === undefined) is_running = false;
+  if (user_percentage === undefined) user_percentage = 1;
 
   const client = await pgClient.connect();
   try {
