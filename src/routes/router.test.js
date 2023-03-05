@@ -4,6 +4,7 @@ import app from "../app.js"
 let testExperiment
 let testID
 let response
+let newVariants
 
 beforeEach( async() => {
   testExperiment = {
@@ -13,6 +14,19 @@ beforeEach( async() => {
     "end_date": "2/23/24",
     "is_running": true,
     "user_percentage": 0.5
+  }
+
+  newVariants = {
+    "variants": [
+      {
+        "experiment_id" : 5,
+        "value": "red",
+      },
+      {
+        "experiment_id" : 5,
+        "value": "red"
+      }
+    ]
   }
 
   response = await supertest(app).post("/api/experiment").send(testExperiment);
@@ -73,53 +87,29 @@ describe("Experiments API", () => {
   })
 });
 
-// describe("Variants API", () => {
-//   let newVariants = {
-//     "variants": [
-//       {
-//         "experiment_id" : 5,
-//         "value": "red",
-//       },
-//       {
-//         "experiment_id" : 5,
-//         "value": "red"
-//       }
-//     ]
-//   }
+describe("Variants API", () => {
+  test( "testing error when adding variant where experiment Id of variants doesn't match param id", async () => {
+    response = await supertest(app).post(`/api/experiment/${testID}/variants`).send(newVariants);
+    expect(response.status).toEqual(403)
+    expect(response.body).toEqual("Error in creating the variants in postgres")
+  })
 
-//   let newExperiment = {
-//     "type_id": 3,
-//     "name": "test_experiment",
-//     "start_date": "2/23/23",
-//     "end_date": "2/23/24",
-//     "is_running": true,
-//     "user_percentage": 0.5
-//   }
+  test( "testing error when varients weights don't sum to 1", async ()=> {
+    newVariants.variants.forEach(variant => variant.experiment_id = testID)
+    newVariants.variants[0].weight = 0.4
+    newVariants.variants[1].weight = 0.4
+    response = await supertest(app).post(`/api/experiment/${testID}/variants`).send(newVariants);
+    expect(response.status).toEqual(403)
+    expect(response.body).toEqual("Error in creating the variants in postgres")
+  })
 
-//   test( "testing create variant" , async () => {
-//     response = await supertest(app).post("/api/experiment").send(newExperiment);
-//     let expId = response.body.id
+  test( "testing create variant" , async () => {
+    newVariants.variants.forEach(variant => variant.experiment_id = testID)
+    newVariants.variants[0].weight = 0.5
+    newVariants.variants[1].weight = 0.5
 
-//     response = await supertest(app).post(`/api/experiment/${expId}/variants`).send(newVariants);
-//     expect(response.status).toEqual(403)
-//     expect(response.body).toEqual("Error in creating the variants in postgres")
-
-//     newVariants.variants.forEach(variant => variant.experiment_id = expId)
-//     newVariants.variants[0].weight = 0.4
-//     newVariants.variants[1].weight = 0.4
-
-
-//     response = await supertest(app).post(`/api/experiment/${expId}/variants`).send(newVariants);
-//     expect(response.status).toEqual(403)
-//     expect(response.body).toEqual("Error in creating the variants in postgres")
-
-//     newVariants.variants[0].weight = 0.5
-//     newVariants.variants[1].weight = 0.5
-
-//     response = await supertest(app).post(`/api/experiment/${expId}/variants`).send(newVariants);
-//     expect(response.status).toEqual(200)
-//     expect(Array.isArray(response.body.variants)).toEqual(true)
-
-//     await supertest(app).delete(`/api/experiment/${expId}`)
-//   })
-// })
+    response = await supertest(app).post(`/api/experiment/${testID}/variants`).send(newVariants);
+    expect(response.status).toEqual(200)
+    expect(Array.isArray(response.body.variants)).toEqual(true)
+  })
+})
