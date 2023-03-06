@@ -37,6 +37,28 @@ async function getExperiments(req, res) {
   }
 }
 
+async function getExperimentByID(req, res) {
+  const id = req.params.id;
+  const client = await pgClient.connect();
+  try {
+    const response = await client.query(
+      "SELECT * FROM experiments WHERE id = $1", [id]
+    );
+    let newExperiment = new Experiment(response.rows[0])
+    let variants = await getVariants(id)
+    if (variants === false) throw new Error("Error getting variants");
+    newExperiment.variant_arr = variants.map(variant => {
+      return new Variant(variant);
+    });
+    res.status(200).json(newExperiment);
+  } catch (error) {
+    res.status(403).json("Error getting the experiment in postgres");
+    console.log(error.stack);
+  } finally {
+    client.release();
+  }
+}
+
 async function getVariants(experiment_id) {
   const client = await pgClient.connect();
   try {
@@ -55,6 +77,26 @@ async function getVariants(experiment_id) {
   }
 }
 
+async function getVariantsByExpID(req, res) {
+  const id = req.params.id;
+  const client = await pgClient.connect();
+  try {
+    const response = await client.query(
+      "SELECT * FROM variants WHERE experiment_id = $1", [id]
+    )
+    let variantArr = response.rows
+    variantArr = variantArr.map(variant => {
+      return new Variant(variant);
+    });
+    res.status(200).json(variantArr);
+  } catch (error) {
+
+    console.log(error.stack);
+    return(false);
+  } finally {
+    client.release();
+  }
+}
 
 async function createExperiment(req, res) {
   let { name, type_id, start_date, end_date, is_running, user_percentage } = req.body;
@@ -154,4 +196,4 @@ async function createVariant(obj) {
 
 function updateVariants() {}
 
-export { getExperiments, createExperiment, updateExperiment, deleteExperiment, createVariants, updateVariants };
+export { getExperiments, getExperimentByID, createExperiment, updateExperiment, deleteExperiment, createVariants, getVariantsByExpID, updateVariants };
