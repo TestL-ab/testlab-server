@@ -9,7 +9,7 @@ import {
   updateVariants,
   getVariantsByExpID,
 } from "../controllers/experimentsController.js";
-import { createEvent, getEvents, getEventsForExperiment } from "../controllers/eventsController.js";
+import { createEvent, getEvents, getEventsForExperiment, getEventData } from "../controllers/eventsController.js";
 import { getUsers, createUser } from "../controllers/usersController.js";
 
 const router = express.Router();
@@ -40,6 +40,8 @@ router.post("/api/events", createEvent);
 router.get("/api/events", getEvents);
 
 router.get("/api/events/experiment/:id", getEventsForExperiment);
+
+router.get("/api/events/experiment/:id/variants/event_data", getEventData)
 
 router.get("/api/users", getUsers);
 
