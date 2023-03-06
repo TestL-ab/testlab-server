@@ -1,6 +1,7 @@
 import express from "express";
 import {
   getExperiments,
+  getExperimentByID,
   createExperiment,
   updateExperiment,
   deleteExperiment,
@@ -14,6 +15,8 @@ const router = express.Router();
 
 router.get("/api/experiment", getExperiments);
 
+router.get("/api/experiment/:id", getExperimentByID);
+
 router.post("/api/experiment", createExperiment);
 
 // dummy route
@@ -25,6 +28,8 @@ router.put("/api/experiment/:id", updateExperiment);
 router.delete("/api/experiment/:id", deleteExperiment);
 
 router.post("/api/experiment/:id/variants", createVariants);
+
+// router.get("/api/experiment/:experimentID/variants/:variantID", getVariantByID);
 
 // dummy route
 router.put("/api/experiment/:id/variants", updateVariants);

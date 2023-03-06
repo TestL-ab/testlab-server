@@ -75,6 +75,11 @@ describe("Experiments API", () => {
     expect(response.body.length >= 1).toBe(true);
   })
 
+  test( "testing get experiment by id", async () => {
+    response = await supertest(app).get(`/api/experiment/${testID}`);
+    expect(response.status).toEqual(200);
+  })
+
   test( "testing Create experiment", async () => {
     response = await supertest(app).post("/api/experiment").send(newExperiment);
     expect(response.status).toEqual(200);
