@@ -7,6 +7,7 @@ import {
   deleteExperiment,
   createVariants,
   updateVariants,
+  getVariantsByExpID,
 } from "../controllers/experimentsController.js";
 import { createEvent, getEvents, getEventsForExperiment } from "../controllers/eventsController.js";
 import { getUsers, createUser } from "../controllers/usersController.js";
@@ -29,7 +30,7 @@ router.delete("/api/experiment/:id", deleteExperiment);
 
 router.post("/api/experiment/:id/variants", createVariants);
 
-// router.get("/api/experiment/:experimentID/variants/:variantID", getVariantByID);
+router.get("/api/experiment/:id/variants", getVariantsByExpID);
 
 // dummy route
 router.put("/api/experiment/:id/variants", updateVariants);

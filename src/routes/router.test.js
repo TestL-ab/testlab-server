@@ -155,4 +155,12 @@ describe("Variants API", () => {
     expect(response.status).toEqual(200)
     expect(Array.isArray(response.body.variants)).toEqual(true)
   })
+
+  test( "get variant array", async () => {
+    newVariants.variants.forEach(variant => variant.experiment_id = testID)
+    response = await supertest(app).post(`/api/experiment/${testID}/variants`).send(newVariants);
+    response = await supertest(app).get(`/api/experiment/${testID}/variants`);
+    expect(response.status).toEqual(200);
+    expect(Array.isArray(response.body)).toEqual(true);
+  })
 })
