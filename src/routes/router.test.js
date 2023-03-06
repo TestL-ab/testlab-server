@@ -1,19 +1,29 @@
 import supertest from "supertest";
 import app from "../app.js"
 
-let testExperiment
+let testExperiment1
+let testExperiment2
 let testID
+let testID2
 let response
 let newVariants
+let newUser
 
 beforeEach( async() => {
-  testExperiment = {
+  testExperiment1 = {
     "type_id": 3,
     "name": "test_experiment",
     "start_date": "2/23/23",
     "end_date": "2/23/24",
     "is_running": true,
     "user_percentage": 0.5
+  }
+
+  testExperiment2 = {
+    "type_id": 3,
+    "name": "test_experiment_2",
+    "start_date": "2/23/23",
+    "end_date": "2/23/24",
   }
 
   newVariants = {
@@ -29,12 +39,23 @@ beforeEach( async() => {
     ]
   }
 
-  response = await supertest(app).post("/api/experiment").send(testExperiment);
+  newUser = {
+    "id": "66b5b74c-b79e-11ed-afa1-0242ac120002",
+    "variant_id": "5",
+    "ip_address": "192.168.101.20"
+  }
+
+  response = await supertest(app).post("/api/experiment").send(testExperiment1);
   testID = response.body.id
+  response = await supertest(app).post("/api/experiment").send(testExperiment2);
+  testID2 = response.body.id
+
+  // response = await (await supertest(app).post("/api/users")).setEncoding(user);
 })
 
 afterEach( async() => {
   await supertest(app).delete(`/api/experiment/${testID}`)
+  await supertest(app).delete(`/api/experiment/${testID2}`)
 })
 
 describe("Experiments API", () => {
