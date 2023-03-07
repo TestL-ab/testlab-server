@@ -3,6 +3,7 @@ DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS variants;
 DROP TABLE IF EXISTS experiments;
 DROP TABLE IF EXISTS types;
+DROP TABLE IF EXISTS userblocks;
 
 CREATE TABLE types (
   id serial PRIMARY KEY,  
@@ -15,8 +16,9 @@ CREATE TABLE experiments (
   name text NOT NULL UNIQUE,
   start_date date NOT NULL,
   end_date date NOT NULL,
-  is_running boolean DEFAULT false NOT NULL,
-  user_percentage decimal NOT NULL DEFAULT 1.0 CHECK (user_percentage BETWEEN 0.0 AND 1.0)
+  is_running boolean DEFAULT true NOT NULL,
+  user_percentage decimal NOT NULL DEFAULT 1.0 CHECK (user_percentage BETWEEN 0.0 AND 1.0),
+  hypothesis text DEFAULT NULL
 );
 
 CREATE TABLE variants (
@@ -28,15 +30,16 @@ CREATE TABLE variants (
 );
 
 CREATE TABLE users (
-  id uuid PRIMARY KEY,
+  id text PRIMARY KEY,
   variant_id int NOT NULL REFERENCES variants(id) ON DELETE CASCADE,
-  ip_address inet NOT NULL
+  ip_address inet NOT NULL,
+  time_stamp timestamp NOT NULL DEFAULT now()
 );
 
 CREATE TABLE events (
   id serial PRIMARY KEY,
   variant_id int NOT NULL REFERENCES variants(id) ON DELETE CASCADE,
-  user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  user_id text NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   time_stamp timestamp NOT NULL DEFAULT now()
 );
 
@@ -44,3 +47,10 @@ INSERT INTO types (type)
 VALUES ('toggle'), ('rollout'), ('experiment');
 
 
+CREATE TABLE userblocks (
+  id serial PRIMARY KEY,
+  name text,
+  experiment_id int DEFAULT NULL
+);
+
+INSERT INTO userblocks (name) VALUES (5), (10), (15), (20), (25), (30), (35), (40), (45), (50), (55), (60), (65), (70), (75), (80), (85), (90), (95), (100);
