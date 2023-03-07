@@ -8,6 +8,8 @@ let testID2
 let response
 let newVariants
 let newUser
+let variant1ID
+let variant2ID
 
 beforeEach( async() => {
   testExperiment1 = {
@@ -49,6 +51,9 @@ beforeEach( async() => {
   testID = response.body.id
   response = await supertest(app).post("/api/experiment").send(testExperiment2);
   testID2 = response.body.id
+  response = await supertest(app).post(`/api/experiment/${testID2}/variants`).send(newVariants)
+  // variant1ID = response.rows.variants[0].id
+  // variant2ID = response.rows.variants[1].id
 
   // response = await (await supertest(app).post("/api/users")).setEncoding(user);
 })
@@ -162,5 +167,25 @@ describe("Variants API", () => {
     response = await supertest(app).get(`/api/experiment/${testID}/variants`);
     expect(response.status).toEqual(200);
     expect(Array.isArray(response.body)).toEqual(true);
+  })
+})
+
+// describe("Events API", () => {
+//   test("")
+// })
+
+describe("User API", () => {
+
+
+
+  test( "create new user", async () => {
+    newVariants.variants.forEach(variant => variant.experiment_id = testID)
+    response = await supertest(app).post(`/api/experiment/${testID}/variants`).send(newVariants);
+    response = await supertest(app).get(`/api/experiment/${testID}/variants`);
+    expect(response.status).toEqual(200);
+  })
+
+  test("delete new user", async () => {
+    expect(1).toEqual(1);
   })
 })

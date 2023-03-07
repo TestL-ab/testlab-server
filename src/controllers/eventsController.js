@@ -83,16 +83,16 @@ async function getEventData(req, res) {
       response = await client.query(
         "SELECT COUNT(id) as event_total FROM events WHERE variant_id = $1", [variant_id]
       )
-      let event_total = response.rows[0].event_total
+      let event_total = Number(response.rows[0].event_total)
       response = await client.query(
         "SELECT COUNT( DISTINCT user_id) as distinct_user_events_total FROM events WHERE variant_id = $1", [variant_id]
       )
-      let distinct_user_events_total = response.rows[0].distinct_user_events_total
+      let distinct_user_events_total = Number(response.rows[0].distinct_user_events_total)
       response = await client.query(
         "SELECT COUNT(id) as total_users FROM users WHERE variant_id = $1", [variant_id]
       )
 
-      let total_users = response.rows[0].total_users
+      let total_users = Number(response.rows[0].total_users)
       event_data.push({
         ...variant,
         event_total,

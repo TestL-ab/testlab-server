@@ -10,7 +10,7 @@ import {
   getVariantsByExpID,
 } from "../controllers/experimentsController.js";
 import { createEvent, getEvents, getEventsForExperiment, getEventData } from "../controllers/eventsController.js";
-import { getUsers, createUser } from "../controllers/usersController.js";
+import { getUsers, createUser, deleteUser } from "../controllers/usersController.js";
 
 const router = express.Router();
 
@@ -42,8 +42,14 @@ router.get("/api/events", getEvents);
 router.get("/api/events/experiment/:id", getEventsForExperiment);
 
 router.get("/api/events/experiment/:id/variants/event_data", getEventData)
+//"/api/analysis/experiment/:id/"
+
+//clicks for day, hour, minute
+//"/api/analysis/experiment/:id/timeframe/:time"
 
 router.get("/api/users", getUsers);
 
 router.post("/api/users", createUser);
+
+router.delete("/api/user/:id", deleteUser);
 export default router;

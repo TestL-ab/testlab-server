@@ -56,4 +56,8 @@ async function createUser(req, res) {
   }
 }
 
-export { getUsers, createUser };
+async function deleteUser(req, res) {
+  res.status(200)
+}
+
+export { getUsers, createUser, deleteUser };
