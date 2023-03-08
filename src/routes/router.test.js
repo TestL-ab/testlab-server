@@ -12,6 +12,7 @@ let testUserID
 let variant1ID
 let variant2ID
 let variants
+let testNewEvent
 
 beforeEach( async() => {
   testExperiment1 = {
@@ -53,6 +54,8 @@ beforeEach( async() => {
     "ip_address": "192.168.101.20"
   }
 
+  testNewEvent = {}
+
   response = await supertest(app).post("/api/experiment").send(testExperiment1);
   testID = response.body.id
   response = await supertest(app).post("/api/experiment").send(testExperiment2);
@@ -68,7 +71,10 @@ beforeEach( async() => {
   newUser.variant_id = variant1ID
   response = await supertest(app).post("/api/users").send(newUser);
   testUserID = response.body.id
-  // response = await supertest(app).post("/api/users").send(newUser);
+  
+  testNewEvent.user_id = testUserID
+  testNewEvent.variant_id = variant2ID
+  response = await supertest(app).post(`/api/events`).send(testNewEvent)
 })
 
 afterEach( async() => {
@@ -223,7 +229,7 @@ describe("User API", () => {
 
 describe("Events API", () => {
   let newEvent = {
-    "user_id": "68a5b74c-b79e-11ed-afa1-0242ac120002",
+    "user_id": "68",
     "variant_id": 14
   }
 
@@ -236,6 +242,21 @@ describe("Events API", () => {
 
   test("failing create event", async () => {
     response = await supertest(app).post(`/api/events`).send(newEvent)
+    expect(response.status).toEqual(403);
+  })
+
+  test("get events", async () => {
+    response = await supertest(app).get(`/api/events`)
+    expect(response.status).toEqual(200);
+  })
+
+  test("Get events for experiment", async () => {
+    response = await supertest(app).get(`/api/experiment/${testID2}`)
+    expect(response.status).toEqual(200);
+  })
+
+  test("failing Get events for experiment", async () => {
+    response = await supertest(app).get(`/api/experiment/${0}`)
     expect(response.status).toEqual(403);
   })
 })
