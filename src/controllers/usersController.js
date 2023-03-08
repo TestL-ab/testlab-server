@@ -21,7 +21,6 @@ async function getUsers(req, res) {
     const response = await client.query("SELECT * FROM users");
     let usersArr = response.rows;
 
-    // console.log("List of Users passed back", usersArr);
     res.status(200).json(usersArr);
   } catch (error) {
     res.status(403).json("Error getting the users in postgres");
@@ -46,7 +45,7 @@ async function createUser(req, res) {
     ]);
 
     let newUser = userData.rows[0];
-    // console.log("New User passed back", newUser);
+
     res.status(200).json(newUser);
   } catch (error) {
     res.status(403).json("Error in creating the user in postgres");
@@ -64,7 +63,7 @@ async function deleteUser(req, res) {
       "DELETE FROM users WHERE id =$1",
       [id]
     );
-    // console.log("New User passed back", newUser);
+
     res.status(200).json(`User with id ${id} was deleted`);
   } catch (error) {
     res.status(403).json("Error in creating the user in postgres");

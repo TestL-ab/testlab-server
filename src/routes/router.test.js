@@ -184,10 +184,6 @@ describe("Variants API", () => {
   })
 })
 
-// describe("Events API", () => {
-//   test("")
-// })
-
 describe("User API", () => {
 
   let testUser = {
@@ -222,5 +218,24 @@ describe("User API", () => {
     let userID = response.body.id
     response = await supertest(app).delete(`/api/users/${userID}`)
     expect(response.status).toEqual(200);
+  })
+})
+
+describe("Events API", () => {
+  let newEvent = {
+    "user_id": "68a5b74c-b79e-11ed-afa1-0242ac120002",
+    "variant_id": 14
+  }
+
+  test("create event", async () => {
+    newEvent.user_id = testUserID
+    newEvent.variant_id = variant1ID
+    response = await supertest(app).post(`/api/events`).send(newEvent)
+    expect(response.status).toEqual(200);
+  })
+
+  test("failing create event", async () => {
+    response = await supertest(app).post(`/api/events`).send(newEvent)
+    expect(response.status).toEqual(403);
   })
 })

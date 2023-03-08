@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">3.7% </span>
+                <span class="strong">21.15% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>2/54</span>
+                <span class='fraction'>11/52</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">16.66% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/6</span>
+                <span class='fraction'>1/6</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">3.77% </span>
+                <span class="strong">21.56% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>2/53</span>
+                <span class='fraction'>11/51</span>
             </div>
         
             
@@ -195,9 +195,7 @@
 <a name='L130'></a><a href='#L130'>130</a>
 <a name='L131'></a><a href='#L131'>131</a>
 <a name='L132'></a><a href='#L132'>132</a>
-<a name='L133'></a><a href='#L133'>133</a>
-<a name='L134'></a><a href='#L134'>134</a>
-<a name='L135'></a><a href='#L135'>135</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L133'></a><a href='#L133'>133</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -222,7 +220,6 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -241,7 +238,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -311,29 +307,29 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import pg from "pg";
 import config from "../utils/config.js";
-import { Experiment, Variant } from "../models/experiment.js";
+import { Variant } from "../models/experiment.js";
 &nbsp;
 const pgClient = new pg.Pool({ database: config.PG_DATABASE });
 // const pgClient = new pg.Pool({
@@ -355,7 +351,6 @@ async function <span class="fstat-no" title="function not covered" >getEvents(</
     const response = <span class="cstat-no" title="statement not covered" >await client.query("SELECT * FROM events");</span>
     let eventsArr = <span class="cstat-no" title="statement not covered" >response.rows;</span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    console.log("List of Events passed back", eventsArr);</span>
 <span class="cstat-no" title="statement not covered" >    res.status(200).json(eventsArr);</span>
   } catch (error) {
 <span class="cstat-no" title="statement not covered" >    res.status(403).json("Error getting the events in postgres");</span>
@@ -375,7 +370,6 @@ async function <span class="fstat-no" title="function not covered" >getEventsFor
     );
     let eventsArr = <span class="cstat-no" title="statement not covered" >response.rows;</span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    console.log("List of Events passed back", eventsArr);</span>
 <span class="cstat-no" title="statement not covered" >    res.status(200).json(eventsArr);</span>
   } catch (error) {
 <span class="cstat-no" title="statement not covered" >    res.status(403).json("Error getting the events in postgres");</span>
@@ -444,23 +438,23 @@ async function <span class="fstat-no" title="function not covered" >getEventData
 }
 &nbsp;
 &nbsp;
-async function <span class="fstat-no" title="function not covered" >createEvent(</span>req, res) {
-  const { variant_id, user_id } = <span class="cstat-no" title="statement not covered" >req.body;</span>
+async function createEvent(req, res) {
+  const { variant_id, user_id } = req.body;
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  console.log("req body", req.body);</span>
+  console.log("req body", req.body);
 &nbsp;
-  const client = <span class="cstat-no" title="statement not covered" >await pgClient.connect();</span>
-<span class="cstat-no" title="statement not covered" >  try {</span>
-    const response = <span class="cstat-no" title="statement not covered" >await client.query(</span>
+  const client = await pgClient.connect();
+  try {
+    const response = await client.query(
       "INSERT INTO events (variant_id, user_id) VALUES ($1, $2)",
       [variant_id, user_id]
     );
-<span class="cstat-no" title="statement not covered" >    res.status(200).json("Event added to database.");</span>
+    res.status(200).json("Event added to database.");
   } catch (error) {
-<span class="cstat-no" title="statement not covered" >    res.status(403).json("Error in creating the event in postgres");</span>
-<span class="cstat-no" title="statement not covered" >    console.log(error.stack);</span>
+    res.status(403).json("Error in creating the event in postgres");
+    console.log(error.stack);
   } finally {
-<span class="cstat-no" title="statement not covered" >    client.release();</span>
+    client.release();
   }
 }
 &nbsp;
@@ -472,7 +466,7 @@ export { getEvents, getEventsForExperiment, createEvent, getEventData };
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2023-03-08T04:13:34.584Z
+                at 2023-03-08T04:28:21.739Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
