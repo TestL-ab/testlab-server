@@ -69,7 +69,6 @@ async function getVariants(experiment_id) {
     // console.log(`Variants for experiment ${experiment_id}`, variant_arr)
     return variant_arr
   } catch (error) {
-
     console.log(error.stack);
     return(false);
   } finally {
@@ -90,9 +89,8 @@ async function getVariantsByExpID(req, res) {
     });
     res.status(200).json(variantArr);
   } catch (error) {
-
     console.log(error.stack);
-    return(false);
+    res.status(403).json("Error getting variants by experiment Id");
   } finally {
     client.release();
   }

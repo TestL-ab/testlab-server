@@ -137,6 +137,11 @@ describe("Experiments API", () => {
     ).toBe(0)
   })
 
+  test( "test error delete experiment", async () => {
+    response = await supertest(app).delete(`/api/experiment/${"bad"}`)
+    expect(response.status).toEqual(400);
+  })
+
   test( "testing creating experiment with defaults", async () => {
     delete newExperiment.is_running
     delete newExperiment.user_percentage
@@ -188,6 +193,11 @@ describe("Variants API", () => {
     expect(response.status).toEqual(200);
     expect(Array.isArray(response.body)).toEqual(true);
   })
+
+  test( "test error getting variants by expID", async () => {
+    response = await supertest(app).get(`/api/experiment/${"bad"}/variants`);
+    expect(response.status).toEqual(403);
+  })
 })
 
 describe("User API", () => {
@@ -203,8 +213,6 @@ describe("User API", () => {
     expect(response.status).toEqual(200);
     expect(Array.isArray(response.body)).toBeTruthy();
   })
-
-
 
   test( "create new user", async () => {
     newVariants.variants.forEach(variant => variant.experiment_id = testID)
