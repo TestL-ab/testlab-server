@@ -143,14 +143,40 @@ async function deleteExperiment(req, res) {
   }
 }
 
-async function updateExperiment(req, res) {}
+async function updateExperiment(req, res) {
+  let id = req.params.id;
+  // const client = await pgClient.connect();
+  // try {
+  //   let variant_arr = req.body.variants;
+
+  //   for (let i = 0; i < variant_arr.length; i++) {
+  //     let variant = variant_arr[i];
+  //     if (variant.experiment_id != id) throw new Error("Experiment Id doesn't match.")
+  //     await createVariant(variant);
+  //   }
+  //   const response = await client.query(
+  //     "SELECT * from variants WHERE experiment_id = $1", [id]
+  //   );
+
+  //   let addVariants = response.rows
+  //   let weightSum = addVariants.reduce( (t,v) => t+Number(v.weight), 0)
+
+  //   if (weightSum != 1 ) throw new Error("Experiment weights don't add to 1")
+  //   res.status(200).json({ variants: addVariants, text: "Made it" });
+  // } catch (error) {
+  //   await client.query("DELETE FROM variants WHERE experiment_id = $1", [id])
+  //   res.status(403).json("Error in creating the variants in postgres");
+  //   console.log(error.stack);
+  // } finally {
+  //   client.release();
+  // }
+}
 
 async function createVariants(req, res) {
   let id = req.params.id;
   const client = await pgClient.connect();
   try {
     let variant_arr = req.body.variants;
-    // console.log("variant array: ", variant_arr);
 
     for (let i = 0; i < variant_arr.length; i++) {
       let variant = variant_arr[i];
@@ -191,7 +217,5 @@ async function createVariant(obj) {
     client.release();
   }
 }
-
-function updateVariants() {}
 
 export { getExperiments, getExperimentByID, createExperiment, updateExperiment, deleteExperiment, createVariants, getVariantsByExpID, updateVariants };
