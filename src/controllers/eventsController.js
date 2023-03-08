@@ -1,6 +1,6 @@
 import pg from "pg";
 import config from "../utils/config.js";
-import { Variant } from "../models/experiment.js";
+import { Variant } from "../models/feature.js";
 
 const pgClient = new pg.Pool({ database: config.PG_DATABASE });
 // const pgClient = new pg.Pool({
@@ -31,12 +31,12 @@ async function getEvents(req, res) {
   }
 }
 
-async function getEventsForExperiment(req, res) {
+async function getEventsForFeature(req, res) {
   const client = await pgClient.connect();
-  const id = req.params.id; //experiment id; event table does not have experiment id column
+  const id = req.params.id; //feature id; event table does not have feature id column
   try {
     const response = await client.query(
-      "SELECT * FROM events INNER JOIN variants ON events.variant_id = variants.id WHERE variants.experiment_id = $1",
+      "SELECT * FROM events INNER JOIN variants ON events.variant_id = variants.id WHERE variants.feature_id = $1",
       [id]
     );
     let eventsArr = response.rows;
@@ -52,11 +52,11 @@ async function getEventsForExperiment(req, res) {
 
 async function getEventData(req, res) {
   const client = await pgClient.connect();
-  const id = req.params.id; //experiment id passed as param, not variantid
+  const id = req.params.id; //feature id passed as param, not variantid
 
   try {
     let response = await client.query(
-      "SELECT * FROM variants WHERE variants.experiment_id = $1",
+      "SELECT * FROM variants WHERE variants.feature_id = $1",
       [id]
     )
     
@@ -119,4 +119,4 @@ async function createEvent(req, res) {
   }
 }
 
-export { getEvents, getEventsForExperiment, createEvent, getEventData };
+export { getEvents, getEventsForFeature, createEvent, getEventData };

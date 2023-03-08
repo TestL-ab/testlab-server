@@ -1,47 +1,47 @@
 import express from "express";
 import {
-  getExperiments,
-  getExperimentByID,
-  createExperiment,
-  updateExperiment,
-  deleteExperiment,
+  getFeatures,
+  getFeatureByID,
+  createFeature,
+  updateFeature,
+  deleteFeature,
   createVariants,
   updateVariants,
   getVariantsByExpID,
-} from "../controllers/experimentsController.js";
-import { createEvent, getEvents, getEventsForExperiment, getEventData } from "../controllers/eventsController.js";
+} from "../controllers/featuresController.js";
+import { createEvent, getEvents, getEventsForFeature, getEventData } from "../controllers/eventsController.js";
 import { getUsers, createUser, deleteUser } from "../controllers/usersController.js";
 
 const router = express.Router();
 
-router.get("/api/experiment", getExperiments);
+router.get("/api/feature", getFeatures);
 
-router.get("/api/experiment/:id", getExperimentByID);
+router.get("/api/feature/:id", getFeatureByID);
 
-router.post("/api/experiment", createExperiment);
-
-// dummy route
-router.put("/api/experiment/:id", updateExperiment);
-
-router.delete("/api/experiment/:id", deleteExperiment);
-
-router.post("/api/experiment/:id/variants", createVariants);
-
-router.get("/api/experiment/:id/variants", getVariantsByExpID);
+router.post("/api/feature", createFeature);
 
 // dummy route
-router.put("/api/experiment/:id/variants", updateVariants);
+router.put("/api/feature/:id", updateFeature);
+
+router.delete("/api/feature/:id", deleteFeature);
+
+router.post("/api/feature/:id/variants", createVariants);
+
+router.get("/api/feature/:id/variants", getVariantsByExpID);
+
+// dummy route
+router.put("/api/feature/:id/variants", updateVariants);
 
 router.post("/api/events", createEvent);
 
 router.get("/api/events", getEvents);
 
-router.get("/api/events/experiment/:id", getEventsForExperiment);
+router.get("/api/events/feature/:id", getEventsForFeature);
 
-router.get("/api/analysis/experiment/:id", getEventData)
+router.get("/api/analysis/feature/:id", getEventData)
 
 //clicks for day, hour, minute
-//"/api/analysis/experiment/:id/timeframe/:time"
+//"/api/analysis/feature/:id/timeframe/:time"
 
 router.get("/api/users", getUsers);
 

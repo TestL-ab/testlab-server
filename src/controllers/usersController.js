@@ -32,6 +32,7 @@ async function getUsers(req, res) {
 
 async function createUser(req, res) {
   const { id, variant_id, ip_address } = req.body;
+  console.log("inputs", id, variant_id, ip_address)
 
   const client = await pgClient.connect();
   try {
