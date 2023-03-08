@@ -1,4 +1,4 @@
-const Experiment = class {
+const Feature = class {
   constructor(obj) {
     this.id = obj.id;
     this.type_id = obj.type_id;
@@ -22,4 +22,4 @@ const Variant = class {
   }
 };
 
-export { Experiment, Variant };
+export { Feature, Variant };
