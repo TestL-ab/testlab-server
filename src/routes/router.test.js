@@ -253,10 +253,21 @@ describe("Events API", () => {
   test("Get events for experiment", async () => {
     response = await supertest(app).get(`/api/experiment/${testID2}`)
     expect(response.status).toEqual(200);
+    expect(response.body.length > 0);
   })
 
   test("failing Get events for experiment", async () => {
     response = await supertest(app).get(`/api/experiment/${0}`)
+    expect(response.status).toEqual(403);
+  })
+
+  test("get event data", async () => {
+    response = await supertest(app).get(`/api/analysis/experiment/${testID2}`)
+    expect(response.status).toEqual(200);
+  })
+
+  test("get event data with bad experiment Id", async () => {
+    response = await supertest(app).get(`/api/analysis/experiment/${"bad"}`)
     expect(response.status).toEqual(403);
   })
 })

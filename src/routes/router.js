@@ -41,8 +41,7 @@ router.get("/api/events", getEvents);
 
 router.get("/api/events/experiment/:id", getEventsForExperiment);
 
-router.get("/api/events/experiment/:id/variants/event_data", getEventData)
-//"/api/analysis/experiment/:id/"
+router.get("/api/analysis/experiment/:id", getEventData)
 
 //clicks for day, hour, minute
 //"/api/analysis/experiment/:id/timeframe/:time"

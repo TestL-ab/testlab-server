@@ -52,17 +52,7 @@ async function getEventsForExperiment(req, res) {
 
 async function getEventData(req, res) {
   const client = await pgClient.connect();
-  const id = req.params.id; //experiment id from params; event table does not have experiment id column
-
-  /*
-  get list of variants
-  get events for that variant << count is event_total
-  get uniq user events for variant << count distic...
-
-  get total users
-    query user table with variant
-
-  */
+  const id = req.params.id; //experiment id passed as param, not variantid
 
   try {
     let response = await client.query(
