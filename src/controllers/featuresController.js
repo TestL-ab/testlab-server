@@ -97,15 +97,16 @@ async function getVariantsByExpID(req, res) {
 }
 
 async function createFeature(req, res) {
-  let { name, type_id, start_date, end_date, is_running, user_percentage } = req.body;
+  let { name, type_id, start_date, end_date, is_running, user_percentage, hypothesis } = req.body;
   if (is_running === undefined) is_running = false;
   if (user_percentage === undefined) user_percentage = 1;
+  if (hypothesis === undefined) hypothesis = "";
 
   const client = await pgClient.connect();
   try {
     const response = await client.query(
-      "INSERT INTO features (type_id, name, start_date, end_date, is_running, user_percentage) VALUES ($1, $2, $3, $4, $5, $6)",
-      [type_id, name, start_date, end_date, is_running, user_percentage]
+      "INSERT INTO features (type_id, name, start_date, end_date, is_running, user_percentage, hypothesis) VALUES ($1, $2, $3, $4, $5, $6, $7)",
+      [type_id, name, start_date, end_date, is_running, user_percentage, hypothesis]
     );
 
     let allData = await client.query(
@@ -145,6 +146,13 @@ async function deleteFeature(req, res) {
 
 async function updateFeature(req, res) {
   let id = req.params.id;
+
+  /*
+  decontruct feature into obj with sql columns
+  deconstruct variant_arr
+
+  */
+
   // const client = await pgClient.connect();
   // try {
   //   let variant_arr = req.body.variants;

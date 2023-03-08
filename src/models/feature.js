@@ -8,6 +8,7 @@ const Feature = class {
     this.end_date = obj.end_date;
     this.is_running = obj.is_running;
     this.user_percentage = Number(obj.user_percentage);
+    this.hypothesis = obj.hypothesis
     this.variant_arr = obj.variant_arr || [];
   }
 };
