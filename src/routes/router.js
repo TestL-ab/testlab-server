@@ -21,9 +21,6 @@ router.get("/api/experiment/:id", getExperimentByID);
 router.post("/api/experiment", createExperiment);
 
 // dummy route
-// router.put("/api/experiment/:id", getExperiment);
-
-// dummy route
 router.put("/api/experiment/:id", updateExperiment);
 
 router.delete("/api/experiment/:id", deleteExperiment);

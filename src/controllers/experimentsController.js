@@ -218,4 +218,8 @@ async function createVariant(obj) {
   }
 }
 
+async function updateVariants () {
+  
+}
+
 export { getExperiments, getExperimentByID, createExperiment, updateExperiment, deleteExperiment, createVariants, getVariantsByExpID, updateVariants };
