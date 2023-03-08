@@ -8,8 +8,10 @@ let testID2
 let response
 let newVariants
 let newUser
+let testUserID
 let variant1ID
 let variant2ID
+let variants
 
 beforeEach( async() => {
   testExperiment1 = {
@@ -31,18 +33,22 @@ beforeEach( async() => {
   newVariants = {
     "variants": [
       {
-        "experiment_id" : 5,
-        "value": "blue",
+        "experiment_id" : 184,
+        "value": "red",
+        "is_control": false,
+        "weight": 0.5
       },
       {
-        "experiment_id" : 5,
-        "value": "red"
+        "experiment_id" : 184,
+        "value": "red",
+        "is_control": false,
+        "weight": 0.5
       }
     ]
   }
 
   newUser = {
-    "id": "66b5b74c-b79e-11ed-afa1-0242ac120002",
+    "id": "66",
     "variant_id": "5",
     "ip_address": "192.168.101.20"
   }
@@ -51,16 +57,24 @@ beforeEach( async() => {
   testID = response.body.id
   response = await supertest(app).post("/api/experiment").send(testExperiment2);
   testID2 = response.body.id
-  response = await supertest(app).post(`/api/experiment/${testID2}/variants`).send(newVariants)
-  // variant1ID = response.rows.variants[0].id
-  // variant2ID = response.rows.variants[1].id
+  newVariants.variants[0].experiment_id = testID2
+  newVariants.variants[1].experiment_id = testID2
+  response = await supertest(app).post(`/api/experiment/${testID2}/variants`).send(newVariants);
+  
+  variants = response.body.variants
+  variant1ID = response.body.variants[0].id
+  variant2ID = response.body.variants[1].id
 
-  // response = await (await supertest(app).post("/api/users")).setEncoding(user);
+  newUser.variant_id = variant1ID
+  response = await supertest(app).post("/api/users").send(newUser);
+  testUserID = response.body.id
+  // response = await supertest(app).post("/api/users").send(newUser);
 })
 
 afterEach( async() => {
   await supertest(app).delete(`/api/experiment/${testID}`)
   await supertest(app).delete(`/api/experiment/${testID2}`)
+  await supertest(app).delete(`/api/users/${testUserID}`)
 })
 
 describe("Experiments API", () => {
@@ -176,6 +190,18 @@ describe("Variants API", () => {
 
 describe("User API", () => {
 
+  let testUser = {
+    "id": "62",
+    "variant_id": 31,
+    "ip_address": "192.168.101.20"
+  }
+
+  test( "get users", async () => {
+    response = await supertest(app).get(`/api/users`)
+    expect(response.status).toEqual(200);
+    expect(Array.isArray(response.body)).toBeTruthy();
+  })
+
 
 
   test( "create new user", async () => {
@@ -183,9 +209,18 @@ describe("User API", () => {
     response = await supertest(app).post(`/api/experiment/${testID}/variants`).send(newVariants);
     response = await supertest(app).get(`/api/experiment/${testID}/variants`);
     expect(response.status).toEqual(200);
+    
+    response = await supertest(app).post("/api/users").send(testUser);
+    expect(response.status).toEqual(200);
+    let userID = response.body.id
+    await supertest(app).delete(`/api/users/${userID}`)
   })
 
   test("delete new user", async () => {
-    expect(1).toEqual(1);
+    response = await supertest(app).post("/api/users").send(testUser);
+    expect(response.status).toEqual(200);
+    let userID = response.body.id
+    response = await supertest(app).delete(`/api/users/${userID}`)
+    expect(response.status).toEqual(200);
   })
 })

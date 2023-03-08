@@ -51,5 +51,6 @@ router.get("/api/users", getUsers);
 
 router.post("/api/users", createUser);
 
-router.delete("/api/user/:id", deleteUser);
+router.delete("/api/users/:id", deleteUser);
+
 export default router;
