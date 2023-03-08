@@ -198,6 +198,10 @@ describe("Variants API", () => {
     response = await supertest(app).get(`/api/feature/${"bad"}/variants`);
     expect(response.status).toEqual(403);
   })
+
+  test( "update feature", async () => {
+    // response = await supertest(app).get(`/api/feature/${"bad"}/variants`);
+  })
 })
 
 describe("User API", () => {

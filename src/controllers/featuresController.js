@@ -145,39 +145,40 @@ async function deleteFeature(req, res) {
 }
 
 async function updateFeature(req, res) {
-  let id = req.params.id;
+  let {id, type_id, name, start_date, end_date, is_running, user_percentage, hypothesis, variant_arr} = req.body;
 
-  /*
-  decontruct feature into obj with sql columns
-  deconstruct variant_arr
 
-  */
+  const client = await pgClient.connect();
+  try {
+    deleteVariants (id)
+    let variantArr = req.body.variant_arr;
+    let response = await client.query(
+      "UPDATE features SET id = $1, type_id = $2, name = $3, start_date = $4, end_date = $5, is_running = $6, user_percentage = $7, hypothesis = $8", [id, type_id, name, start_date, end_date, is_running, user_percentage, hypothesis]
+    );
 
-  // const client = await pgClient.connect();
-  // try {
-  //   let variant_arr = req.body.variants;
 
-  //   for (let i = 0; i < variant_arr.length; i++) {
-  //     let variant = variant_arr[i];
-  //     if (variant.feature_id != id) throw new Error("feature Id doesn't match.")
-  //     await createVariant(variant);
-  //   }
-  //   const response = await client.query(
-  //     "SELECT * from variants WHERE feature_id = $1", [id]
-  //   );
-
-  //   let addVariants = response.rows
-  //   let weightSum = addVariants.reduce( (t,v) => t+Number(v.weight), 0)
-
-  //   if (weightSum != 1 ) throw new Error("feature weights don't add to 1")
-  //   res.status(200).json({ variants: addVariants, text: "Made it" });
-  // } catch (error) {
-  //   await client.query("DELETE FROM variants WHERE feature_id = $1", [id])
-  //   res.status(403).json("Error in creating the variants in postgres");
-  //   console.log(error.stack);
-  // } finally {
-  //   client.release();
-  // }
+    for (let i = 0; i < variant_arr.length; i++) {
+      let variant = variant_arr[i];
+      if (variant.feature_id != id) throw new Error("feature Id doesn't match.")
+      await createVariant(variant);
+    }
+    response = await client.query(
+      "SELECT * from variants WHERE feature_id = $1", [id]
+    );
+    
+    let addVariants = response.rows
+    let weightSum = addVariants.reduce( (t,v) => t+Number(v.weight), 0)
+    if (addVariants.length != 0 && weightSum != 1 ) {
+      throw new Error("feature weights don't add to 1")
+    }
+    res.status(200).json({ variants: addVariants, text: "Made it" });
+  } catch (error) {
+    await client.query("DELETE FROM variants WHERE feature_id = $1", [id])
+    res.status(403).json("Error in creating the variants in postgres");
+    console.log(error.stack);
+  } finally {
+    client.release();
+  }
 }
 
 async function createVariants(req, res) {
@@ -226,8 +227,22 @@ async function createVariant(obj) {
   }
 }
 
-async function updateVariants () {
+async function updateVariants (req, res) {
 
 }
 
-export { getFeatures, getFeatureByID, createFeature, updateFeature, deleteFeature, createVariants, getVariantsByExpID, updateVariants };
+async function deleteVariants (id) {
+  const client = await pgClient.connect();
+  try {
+    await client.query("DELETE FROM variants WHERE feature_id = $1" , [id])
+    return true
+  } catch (error) {
+    // res.status(403).json("Error deleting the variants in postgres");
+    // console.log(error.stack);
+    return false
+  } finally {
+    client.release();
+  }
+}
+
+export { getFeatures, getFeatureByID, createFeature, updateFeature, deleteFeature, createVariants, getVariantsByExpID, updateVariants, deleteVariants };
