@@ -66,7 +66,7 @@ async function deleteUser(req, res) {
 
     res.status(200).json(`User with id ${id} was deleted`);
   } catch (error) {
-    res.status(403).json("Error in creating the user in postgres");
+    res.status(403).json("Error in deleting the user in postgres");
     console.log(error.stack);
   } finally {
     client.release();

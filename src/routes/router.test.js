@@ -35,7 +35,7 @@ beforeEach( async() => {
     "variants": [
       {
         "experiment_id" : 184,
-        "value": "red",
+        "value": "blue",
         "is_control": false,
         "weight": 0.5
       },
@@ -216,6 +216,11 @@ describe("User API", () => {
     expect(response.status).toEqual(200);
     let userID = response.body.id
     await supertest(app).delete(`/api/users/${userID}`)
+  })
+
+  test( "create new user with bad data", async () => {
+    response = await supertest(app).post("/api/users").send({id: 12});
+    expect(response.status).toEqual(403);
   })
 
   test("delete new user", async () => {
