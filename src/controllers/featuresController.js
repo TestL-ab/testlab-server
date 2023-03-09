@@ -37,6 +37,35 @@ async function getFeatures(req, res) {
   }
 }
 
+async function getCurrentFeatures(req, res) {
+  const client = await pgClient.connect();
+  try {
+    const response = await client.query(
+      "SELECT * FROM features WHERE start_date <= CURRENT_DATE AND end_date >= CURRENT_DATE"
+    );
+    let featuresArr = response.rows.map(exp => {
+      return new Feature(exp);
+    })
+    // iterate over featureArr to tun into new feature objects
+    for (let i = 0; i < featuresArr.length; i++) {
+      let variants = await getVariants(featuresArr[i].id);
+      if (variants === false) throw new Error("Error getting variants");
+      // console.log("variants", variants)
+      featuresArr[i].variant_arr = variants.map(variant => {
+        return new Variant(variant);
+      });
+    }
+
+    // console.log("List of features passed back", featuresArr);
+    res.status(200).json(featuresArr);
+  } catch (error) {
+    res.status(403).json("Error getting the feature in postgres");
+    console.log(error.stack);
+  } finally {
+    client.release();
+  }
+}
+
 async function getFeatureByID(req, res) {
   const id = req.params.id;
   const client = await pgClient.connect();
@@ -237,4 +266,4 @@ async function deleteVariants (id) {
   }
 }
 
-export { getFeatures, getFeatureByID, createFeature, updateFeature, deleteFeature, createVariants, getVariantsByExpID, updateVariants, deleteVariants };
+export { getFeatures, getFeatureByID, createFeature, updateFeature, deleteFeature, createVariants, getVariantsByExpID, updateVariants, deleteVariants, getCurrentFeatures };

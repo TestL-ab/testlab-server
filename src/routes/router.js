@@ -9,6 +9,7 @@ import {
   updateVariants,
   deleteVariants,
   getVariantsByExpID,
+  getCurrentFeatures,
 } from "../controllers/featuresController.js";
 import { createEvent, getEvents, getEventsForFeature, getEventData } from "../controllers/eventsController.js";
 import { getUsers, createUser, deleteUser } from "../controllers/usersController.js";
@@ -17,6 +18,8 @@ import { getUserblocks, setUserBlock, resetUserBlock, getUserblockByName } from 
 const router = express.Router();
 
 router.get("/api/feature", getFeatures);
+
+router.get("/api/feature/current", getCurrentFeatures);
 
 router.get("/api/feature/:id", getFeatureByID);
 
