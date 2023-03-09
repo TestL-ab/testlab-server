@@ -8,6 +8,24 @@ pgClient.on("error", (err, client) => {
   process.exit(-1);
 });
 
+async function getUserblockByName(req, res) {
+  const name = req.params.name;
+  const client = await pgClient.connect();
+  try {
+    const response = await client.query(
+      "SELECT * FROM userblocks WHERE name = $1", [name]
+    );
+    let block = response.rows[0]
+    if (!block) throw new Error("No userblocks with that name")
+    res.status(200).json(block);
+  } catch (error) {
+    res.status(403).json("Error in getting userblocks in postgres");
+    console.log(error.stack);
+  } finally {
+    client.release();
+  }
+}
+
 async function getUserblocks(req, res) {
   const client = await pgClient.connect();
   try {
@@ -64,4 +82,4 @@ async function resetUserBlock(req, res) {
   }
 }
 
-export { getUserblocks, setUserBlock, resetUserBlock };
+export { getUserblocks, setUserBlock, resetUserBlock, getUserblockByName };

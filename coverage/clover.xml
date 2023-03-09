@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1678376724219" clover="3.2.0">
-  <project timestamp="1678376724220" name="All files">
-    <metrics statements="291" coveredstatements="258" conditionals="28" coveredconditionals="18" methods="38" coveredmethods="30" elements="357" coveredelements="306" complexity="0" loc="291" ncloc="291" packages="5" files="10" classes="10"/>
+<coverage generated="1678377417827" clover="3.2.0">
+  <project timestamp="1678377417827" name="All files">
+    <metrics statements="310" coveredstatements="258" conditionals="30" coveredconditionals="18" methods="40" coveredmethods="30" elements="380" coveredelements="306" complexity="0" loc="310" ncloc="310" packages="5" files="10" classes="10"/>
     <package name="src">
       <metrics statements="8" coveredstatements="8" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
       <file name="app.js" path="/home/sarahnd/LS/TestLab/proto-testLab/src/app.js">
@@ -17,7 +17,7 @@
       </file>
     </package>
     <package name="src.controllers">
-      <metrics statements="225" coveredstatements="200" conditionals="22" coveredconditionals="16" methods="31" coveredmethods="26"/>
+      <metrics statements="242" coveredstatements="198" conditionals="24" coveredconditionals="16" methods="33" coveredmethods="26"/>
       <file name="eventsController.js" path="/home/sarahnd/LS/TestLab/proto-testLab/src/controllers/eventsController.js">
         <metrics statements="50" coveredstatements="46" conditionals="0" coveredconditionals="0" methods="6" coveredmethods="5"/>
         <line num="5" count="1" type="stmt"/>
@@ -194,32 +194,49 @@
         <line num="236" count="39" type="stmt"/>
       </file>
       <file name="userblocksController.js" path="/home/sarahnd/LS/TestLab/proto-testLab/src/controllers/userblocksController.js">
-        <metrics statements="25" coveredstatements="21" conditionals="2" coveredconditionals="2" methods="3" coveredmethods="2"/>
+        <metrics statements="42" coveredstatements="19" conditionals="4" coveredconditionals="2" methods="5" coveredmethods="2"/>
         <line num="4" count="1" type="stmt"/>
         <line num="6" count="1" type="stmt"/>
         <line num="7" count="0" type="stmt"/>
         <line num="8" count="0" type="stmt"/>
-        <line num="12" count="1" type="stmt"/>
-        <line num="13" count="1" type="stmt"/>
-        <line num="14" count="1" type="stmt"/>
-        <line num="17" count="1" type="stmt"/>
-        <line num="18" count="1" type="stmt"/>
+        <line num="12" count="0" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+        <line num="14" count="0" type="stmt"/>
+        <line num="15" count="0" type="stmt"/>
+        <line num="18" count="0" type="stmt"/>
+        <line num="19" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="20" count="0" type="stmt"/>
-        <line num="21" count="0" type="stmt"/>
-        <line num="23" count="1" type="stmt"/>
-        <line num="28" count="2" type="stmt"/>
-        <line num="29" count="2" type="stmt"/>
-        <line num="30" count="2" type="stmt"/>
-        <line num="31" count="2" type="stmt"/>
-        <line num="32" count="2" type="stmt"/>
-        <line num="33" count="2" type="stmt"/>
-        <line num="36" count="2" type="stmt"/>
-        <line num="39" count="2" type="stmt"/>
-        <line num="41" count="2" type="cond" truecount="2" falsecount="0"/>
-        <line num="42" count="1" type="stmt"/>
-        <line num="44" count="1" type="stmt"/>
-        <line num="45" count="1" type="stmt"/>
+        <line num="22" count="0" type="stmt"/>
+        <line num="23" count="0" type="stmt"/>
+        <line num="25" count="0" type="stmt"/>
+        <line num="30" count="1" type="stmt"/>
+        <line num="31" count="1" type="stmt"/>
+        <line num="32" count="1" type="stmt"/>
+        <line num="35" count="1" type="stmt"/>
+        <line num="36" count="1" type="stmt"/>
+        <line num="38" count="0" type="stmt"/>
+        <line num="39" count="0" type="stmt"/>
+        <line num="41" count="1" type="stmt"/>
+        <line num="46" count="2" type="stmt"/>
         <line num="47" count="2" type="stmt"/>
+        <line num="48" count="2" type="stmt"/>
+        <line num="49" count="2" type="stmt"/>
+        <line num="52" count="2" type="stmt"/>
+        <line num="55" count="2" type="stmt"/>
+        <line num="56" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="57" count="1" type="stmt"/>
+        <line num="59" count="1" type="stmt"/>
+        <line num="60" count="1" type="stmt"/>
+        <line num="62" count="2" type="stmt"/>
+        <line num="67" count="0" type="stmt"/>
+        <line num="68" count="0" type="stmt"/>
+        <line num="69" count="0" type="stmt"/>
+        <line num="72" count="0" type="stmt"/>
+        <line num="75" count="0" type="stmt"/>
+        <line num="76" count="0" type="stmt"/>
+        <line num="78" count="0" type="stmt"/>
+        <line num="79" count="0" type="stmt"/>
+        <line num="81" count="0" type="stmt"/>
       </file>
       <file name="usersController.js" path="/home/sarahnd/LS/TestLab/proto-testLab/src/controllers/usersController.js">
         <metrics statements="31" coveredstatements="25" conditionals="0" coveredconditionals="0" methods="4" coveredmethods="3"/>
@@ -279,9 +296,9 @@
       </file>
     </package>
     <package name="src.routes">
-      <metrics statements="18" coveredstatements="18" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      <metrics statements="20" coveredstatements="20" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
       <file name="router.js" path="/home/sarahnd/LS/TestLab/proto-testLab/src/routes/router.js">
-        <metrics statements="18" coveredstatements="18" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <metrics statements="20" coveredstatements="20" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
         <line num="17" count="1" type="stmt"/>
         <line num="19" count="1" type="stmt"/>
         <line num="21" count="1" type="stmt"/>
@@ -300,6 +317,8 @@
         <line num="54" count="1" type="stmt"/>
         <line num="56" count="1" type="stmt"/>
         <line num="58" count="1" type="stmt"/>
+        <line num="60" count="1" type="stmt"/>
+        <line num="62" count="1" type="stmt"/>
       </file>
     </package>
     <package name="src.utils">

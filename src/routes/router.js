@@ -12,7 +12,7 @@ import {
 } from "../controllers/featuresController.js";
 import { createEvent, getEvents, getEventsForFeature, getEventData } from "../controllers/eventsController.js";
 import { getUsers, createUser, deleteUser } from "../controllers/usersController.js";
-import { getUserblocks, setUserBlock, resetUserBlock } from "../controllers/userblocksController.js";
+import { getUserblocks, setUserBlock, resetUserBlock, getUserblockByName } from "../controllers/userblocksController.js";
 
 const router = express.Router();
 
@@ -54,6 +54,8 @@ router.post("/api/users", createUser);
 router.delete("/api/users/:id", deleteUser);
 
 router.get("/api/userblocks", getUserblocks);
+
+router.get("/api/userblocks/:name", getUserblockByName);
 
 router.put("/api/userblocks", setUserBlock);
 
