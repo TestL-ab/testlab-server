@@ -95,19 +95,17 @@ async function updateUserBlocks(currentExperiments) {
       scheduledIDs.push(block.feature_id)
     })
 
+    for(let i = 0; i<oldblocks.length; i++) {
+      let block = oldblocks[i]
+      freeblocks.push (await resetBlock(block));
+    }
+
     for(let i = 0; i< currentExperimentIDs.length; i ++) {
       if (freeblocks.length === 0 ) throw new Error("overbooked experiments");
       let experiment = currentExperiments[i]
       let id = currentExperimentIDs[i]
       if (scheduledIDs.includes(id)) continue
       freeblocks = await scheduleExperiment(experiment, freeblocks)
-    }
-
-    
-
-    for(let i = 0; i<oldblocks.length; i++) {
-      let name = oldblocks[i].name
-      await resetBlock(name);
     }
 
   } catch (error) {
@@ -119,7 +117,8 @@ async function updateUserBlocks(currentExperiments) {
 }
 
 async function scheduleExperiment(experiment, freeblocks) {
-  let {feature_id, percentage} = experiment
+  let feature_id = experiment.id
+  let {percentage} = experiment
   percentage *= 100
   let percentFree = freeblocks.length * 5
   percentage = Math.min(percentFree, percentage)
@@ -129,14 +128,14 @@ async function scheduleExperiment(experiment, freeblocks) {
     let currentPercentage = 0
     for(let i = 0; i < freeblocks.length; i++) {
       if (currentPercentage >= percentage) break;
-      if (freeblocks.length  === 0) break;
       currentPercentage += 5;
-      let {name} = freeblocks[i]
+      let {id} = freeblocks[i]
       await client.query(
-        "UPDATE userblocks SET feature_id = $1 WHERE name = $2", [feature_id, name]
+        "UPDATE userblocks SET feature_id = $1 WHERE id = $2", [feature_id, id]
       );
       blockIDSUsed.push(freeblocks[i].id)
-      console.log(`scheduled Experiment: ${experiment.name} in block: ${name}`)
+      // console.log(`scheduled Experiment: ${experiment.name} in block: ${id}`)
+      console.log(`feature id: ${feature_id}, block id: ${id}`)
     }
     return freeblocks.filter( block => blockIDSUsed.includes(block.id))
   } catch (error) {
@@ -148,7 +147,8 @@ async function scheduleExperiment(experiment, freeblocks) {
 }
   
 
-async function resetBlock(name) {
+async function resetBlock(block) {
+  let {name} = block
   const client = await pgClient.connect();
   try {
     await client.query(
