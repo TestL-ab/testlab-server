@@ -50,8 +50,9 @@ async function getCurrentFeatures(req, res) {
         return new Variant(variant);
       });
     }
-
-    let currentExperiments = featuresArr.filter( obj => obj.type_id === 3)
+    let currentToggles = featuresArr.filter( obj => obj.type_id === 1)
+    let currentRollouts = featuresArr.filter( obj => obj.type_id === 2)
+    let currentExperiments = featuresArr.filter( obj => obj.type_id === 3) 
     console.log("before update")
     await updateUserBlocks(currentExperiments)
     console.log("after update")
@@ -60,9 +61,9 @@ async function getCurrentFeatures(req, res) {
       "SELECT * FROM userblocks"
     );
     userblocks = userblocks.rows
-    let currentExperimentObj = {experiments: currentExperiments, userblocks}
+    let currentObj = {experiments: currentExperiments, toggles: currentToggles, rollouts: currentRollouts, userblocks}
 
-    res.status(200).json(currentExperimentObj);
+    res.status(200).json(currentObj);
   } catch (error) {
     res.status(403).json("Error getting the feature in postgres");
     console.log(error.stack);
@@ -148,7 +149,6 @@ async function scheduleExperiment(experiment, freeblocks) {
   }
 }
   
-
 async function resetBlock(block) {
   let {name} = block
   const client = await pgClient.connect();
@@ -230,18 +230,18 @@ async function createFeature(req, res) {
 
   const client = await pgClient.connect();
   try {
-    const response = await client.query(
+    let response = await client.query(
       "INSERT INTO features (type_id, name, start_date, end_date, is_running, user_percentage, description) VALUES ($1, $2, $3, $4, $5, $6, $7)",
       [type_id, name, start_date, end_date, is_running, user_percentage, description]
     );
 
-    let allData = await client.query(
+    response = await client.query(
       "SELECT * FROM features WHERE name = $1",
       [name]
     );
 
-    allData = allData.rows[0];
-    let newFeature = new Feature(allData);
+    response = response.rows[0];
+    let newFeature = new Feature(response);
     res.status(200).json(newFeature);
   } catch (error) {
     res.status(403).json("Error in creating the feature in postgres");
@@ -271,7 +271,6 @@ async function deleteFeature(req, res) {
 
 async function updateFeature(req, res) {
   let {id, type_id, name, start_date, end_date, is_running, user_percentage, description} = req.body;
-
 
   const client = await pgClient.connect();
   try {
@@ -317,7 +316,7 @@ async function createVariants(req, res) {
     let weightSum = addVariants.reduce( (t,v) => t+Number(v.weight), 0)
 
     if (weightSum != 1 ) throw new Error("feature weights don't add to 1")
-    res.status(200).json({ variants: addVariants, text: "Made it" });
+    res.status(200).json(addVariants);  //FIXME
   } catch (error) {
     await client.query("DELETE FROM variants WHERE feature_id = $1", [id])
     res.status(403).json("Error in creating the variants in postgres");

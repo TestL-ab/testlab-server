@@ -64,9 +64,9 @@ beforeEach( async() => {
   newVariants.variants[1].feature_id = testID2
   response = await supertest(app).post(`/api/feature/${testID2}/variants`).send(newVariants);
   
-  variants = response.body.variants
-  variant1ID = response.body.variants[0].id
-  variant2ID = response.body.variants[1].id
+  variants = response.body
+  variant1ID = response.body[0].id
+  variant2ID = response.body[1].id
 
   newUser.variant_id = variant1ID
   response = await supertest(app).post("/api/users").send(newUser);
@@ -193,7 +193,7 @@ describe("Variants API", () => {
 
     response = await supertest(app).post(`/api/feature/${testID}/variants`).send(newVariants);
     expect(response.status).toEqual(200)
-    expect(Array.isArray(response.body.variants)).toEqual(true)
+    expect(Array.isArray(response.body)).toEqual(true)
   })
 
   test( "get variant array", async () => {
