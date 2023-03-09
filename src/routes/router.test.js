@@ -316,3 +316,49 @@ describe("Events API", () => {
     expect(response.status).toEqual(200);
   })
 })
+
+describe("Userblocks API", () => {
+  test("get userblock", async () => {
+    response = await supertest(app).get(`/api/userblocks`)
+    expect(response.status).toEqual(200);
+  })
+
+  test("get userblock by name", async () => {
+    response = await supertest(app).get(`/api/userblocks/20`)
+    expect(response.status).toEqual(200);
+    expect(response.body.id).toEqual(4)
+  })
+
+  test("error get userblock by name", async () => {
+    response = await supertest(app).get(`/api/userblocks/23`)
+    expect(response.status).toEqual(403);
+  })
+
+  test("error set userblock", async () => {
+    response = await supertest(app).put(`/api/userblocks`).send({
+      "feature_id": "63",
+      "name": "4" 
+    })
+    expect(response.status).toEqual(403);
+  })
+
+  test("set userblock", async () => {
+    response = await supertest(app).put(`/api/userblocks`).send({
+      "feature_id": "63",
+      "name": "5" 
+    })
+    expect(response.status).toEqual(200);
+    expect(response.body.feature_id).toEqual(63)
+  })
+
+  test("reset userblock", async () => {
+    response = await supertest(app).put(`/api/userblocks`).send({
+      "feature_id": "63",
+      "name": "5" 
+    })
+    response = await supertest(app).put(`/api/userblocks/reset`)
+    expect(response.status).toEqual(200);
+    response = await supertest(app).get(`/api/userblocks/5`)
+    expect(response.body.feature_id).toEqual(null)
+  })
+})
