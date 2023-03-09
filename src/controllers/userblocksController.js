@@ -26,8 +26,6 @@ async function getUserblocks(req, res) {
 
 async function setUserBlock(req, res) {
   const {feature_id, name} = req.body
-  console.log("name", name)
-  console.log("featureID", feature_id)
   const client = await pgClient.connect();
   try {
     let response = await client.query(
@@ -37,7 +35,6 @@ async function setUserBlock(req, res) {
       "SELECT * FROM userblocks WHERE name = $1", [name]
     )
     let block = response.rows[0]
-    // console.log("block ---------", block)
     if (!block) throw new Error("No userblocks with that name")
     res.status(200).json(block);
   } catch (error) {
@@ -48,4 +45,23 @@ async function setUserBlock(req, res) {
   }
 }
 
-export { getUserblocks, setUserBlock };
+async function resetUserBlock(req, res) {
+  const client = await pgClient.connect();
+  try {
+    let response = await client.query(
+      "UPDATE userblocks SET feature_id = null"
+    );
+    response = await client.query(
+      "SELECT * FROM userblocks"
+    )
+    let blocks = response.rows
+    res.status(200).json(blocks);
+  } catch (error) {
+    res.status(403).json(`Error in resetting userblocks in postgres`);
+    console.log(error.stack);
+  } finally {
+    client.release();
+  }
+}
+
+export { getUserblocks, setUserBlock, resetUserBlock };
