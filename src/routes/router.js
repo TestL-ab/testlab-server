@@ -7,6 +7,7 @@ import {
   deleteFeature,
   createVariants,
   updateVariants,
+  deleteVariants,
   getVariantsByExpID,
 } from "../controllers/featuresController.js";
 import { createEvent, getEvents, getEventsForFeature, getEventData } from "../controllers/eventsController.js";
@@ -31,6 +32,8 @@ router.get("/api/feature/:id/variants", getVariantsByExpID);
 
 // dummy route
 router.put("/api/feature/:id/variants", updateVariants);
+
+// router.delete("/api/feature/:id/variants", deleteVariants);
 
 router.post("/api/events", createEvent);
 

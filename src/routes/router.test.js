@@ -152,6 +152,16 @@ describe("Features API", () => {
 
     await supertest(app).delete(`/api/feature/${testID}`)
   })
+
+  test( "update feature", async () => {
+    let response = await supertest(app).get(`/api/feature/${testID2}`);
+    let testID2Obj = response.body
+    testID2Obj.name = "purple"
+    testID2Obj = {...testID2Obj, id: testID2}
+    response = await supertest(app).put(`/api/feature/${testID2}`).send(testID2Obj);
+    expect(response.status).toEqual(200)
+    expect(response.body.name === "purple")
+  })
 });
 
 describe("Variants API", () => {
@@ -197,6 +207,15 @@ describe("Variants API", () => {
   test( "test error getting variants by expID", async () => {
     response = await supertest(app).get(`/api/feature/${"bad"}/variants`);
     expect(response.status).toEqual(403);
+  })
+
+  test( "update variant", async () => {
+    newVariants.variants.forEach(variant => variant.feature_id = testID)
+    response = await supertest(app).post(`/api/feature/${testID}/variants`).send(newVariants);
+    newVariants.
+    response = await supertest(app).post(`/api/feature/${testID}/variants`).send(newVariants);
+    expect(response.status).toEqual(200);
+    // response = await supertest(app).get(`/api/feature/${"bad"}/variants`);
   })
 })
 
