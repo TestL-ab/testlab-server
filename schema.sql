@@ -18,7 +18,7 @@ CREATE TABLE features (
   end_date date NOT NULL,
   is_running boolean DEFAULT true NOT NULL,
   user_percentage decimal NOT NULL DEFAULT 1.0 CHECK (user_percentage BETWEEN 0.0 AND 1.0),
-  hypothesis text DEFAULT NULL
+  description text DEFAULT NULL
 );
 
 CREATE TABLE variants (

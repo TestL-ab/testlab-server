@@ -97,16 +97,16 @@ async function getVariantsByExpID(req, res) {
 }
 
 async function createFeature(req, res) {
-  let { name, type_id, start_date, end_date, is_running, user_percentage, hypothesis } = req.body;
+  let { name, type_id, start_date, end_date, is_running, user_percentage, description } = req.body;
   if (is_running === undefined) is_running = false;
   if (user_percentage === undefined) user_percentage = 1;
-  if (hypothesis === undefined) hypothesis = "";
+  if (description === undefined) description = "";
 
   const client = await pgClient.connect();
   try {
     const response = await client.query(
-      "INSERT INTO features (type_id, name, start_date, end_date, is_running, user_percentage, hypothesis) VALUES ($1, $2, $3, $4, $5, $6, $7)",
-      [type_id, name, start_date, end_date, is_running, user_percentage, hypothesis]
+      "INSERT INTO features (type_id, name, start_date, end_date, is_running, user_percentage, description) VALUES ($1, $2, $3, $4, $5, $6, $7)",
+      [type_id, name, start_date, end_date, is_running, user_percentage, description]
     );
 
     let allData = await client.query(
@@ -145,13 +145,13 @@ async function deleteFeature(req, res) {
 }
 
 async function updateFeature(req, res) {
-  let {id, type_id, name, start_date, end_date, is_running, user_percentage, hypothesis} = req.body;
+  let {id, type_id, name, start_date, end_date, is_running, user_percentage, description} = req.body;
 
 
   const client = await pgClient.connect();
   try {
     let response = await client.query(
-      "UPDATE features SET type_id = $2, name = $3, start_date = $4, end_date = $5, is_running = $6, user_percentage = $7, hypothesis = $8 WHERE id = $1", [id, type_id, name, start_date, end_date, is_running, user_percentage, hypothesis]
+      "UPDATE features SET type_id = $2, name = $3, start_date = $4, end_date = $5, is_running = $6, user_percentage = $7, description = $8 WHERE id = $1", [id, type_id, name, start_date, end_date, is_running, user_percentage, description]
     );
     response = await client.query(
       "SELECT * FROM features WHERE id = $1", [id]
