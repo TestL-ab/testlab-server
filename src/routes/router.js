@@ -25,7 +25,6 @@ router.get("/api/feature/:id", getFeatureByID);
 
 router.post("/api/feature", createFeature);
 
-// dummy route
 router.put("/api/feature/:id", updateFeature);
 
 router.delete("/api/feature/:id", deleteFeature);

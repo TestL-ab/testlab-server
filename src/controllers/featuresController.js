@@ -17,17 +17,14 @@ async function getFeatures(req, res) {
     let featuresArr = response.rows.map(exp => {
       return new Feature(exp);
     })
-    // iterate over featureArr to tun into new feature objects
     for (let i = 0; i < featuresArr.length; i++) {
       let variants = await getVariants(featuresArr[i].id);
       if (variants === false) throw new Error("Error getting variants");
-      // console.log("variants", variants)
       featuresArr[i].variant_arr = variants.map(variant => {
         return new Variant(variant);
       });
     }
 
-    // console.log("List of features passed back", featuresArr);
     res.status(200).json(featuresArr);
   } catch (error) {
     res.status(403).json("Error getting the feature in postgres");
@@ -40,27 +37,126 @@ async function getFeatures(req, res) {
 async function getCurrentFeatures(req, res) {
   const client = await pgClient.connect();
   try {
-    const response = await client.query(
+    let response = await client.query(
       "SELECT * FROM features WHERE start_date <= CURRENT_DATE AND end_date >= CURRENT_DATE"
     );
     let featuresArr = response.rows.map(exp => {
       return new Feature(exp);
     })
-    // iterate over featureArr to tun into new feature objects
     for (let i = 0; i < featuresArr.length; i++) {
       let variants = await getVariants(featuresArr[i].id);
       if (variants === false) throw new Error("Error getting variants");
-      // console.log("variants", variants)
       featuresArr[i].variant_arr = variants.map(variant => {
         return new Variant(variant);
       });
     }
 
-    // console.log("List of features passed back", featuresArr);
-    res.status(200).json(featuresArr);
+    let currentExperiments = featuresArr.filter( obj => obj.type_id === 3)
+    console.log("before update")
+    await updateUserBlocks(currentExperiments)
+    console.log("after update")
+
+    let userblocks = await client.query(
+      "SELECT * FROM userblocks"
+    );
+    userblocks = userblocks.rows
+    let currentExperimentObj = {experiments: currentExperiments, userblocks}
+
+    res.status(200).json(currentExperimentObj);
   } catch (error) {
     res.status(403).json("Error getting the feature in postgres");
     console.log(error.stack);
+  } finally {
+    client.release();
+  }
+}
+
+async function updateUserBlocks(currentExperiments) {
+  let currentExperimentIDs = currentExperiments.map( obj => obj.id)
+  const client = await pgClient.connect();
+  try {
+    let response = await client.query(
+      "SELECT * FROM userblocks"
+    );
+    let userblocks = response.rows
+    let oldblocks = []
+    let scheduledIDs = []
+    let freeblocks = []
+
+    userblocks.forEach( block=> {
+      if (block.feature_id === null) {
+        freeblocks.push(block)
+        return
+      }
+      if (!currentExperimentIDs.includes(block.feature_id)) {
+        oldblocks.push(block)
+        return
+      }
+      scheduledIDs.push(block.feature_id)
+    })
+
+    for(let i = 0; i< currentExperimentIDs.length; i ++) {
+      if (freeblocks.length === 0 ) throw new Error("overbooked experiments");
+      let experiment = currentExperiments[i]
+      let id = currentExperimentIDs[i]
+      if (scheduledIDs.includes(id)) continue
+      freeblocks = await scheduleExperiment(experiment, freeblocks)
+    }
+
+    
+
+    for(let i = 0; i<oldblocks.length; i++) {
+      let name = oldblocks[i].name
+      await resetBlock(name);
+    }
+
+  } catch (error) {
+    console.log("error updating blocks")
+    return false
+  } finally {
+    client.release();
+  }
+}
+
+async function scheduleExperiment(experiment, freeblocks) {
+  let {feature_id, percentage} = experiment
+  percentage *= 100
+  let percentFree = freeblocks.length * 5
+  percentage = Math.min(percentFree, percentage)
+  let blockIDSUsed = []
+  const client = await pgClient.connect();
+  try {
+    let currentPercentage = 0
+    for(let i = 0; i < freeblocks.length; i++) {
+      if (currentPercentage >= percentage) break;
+      if (freeblocks.length  === 0) break;
+      currentPercentage += 5;
+      let {name} = freeblocks[i]
+      await client.query(
+        "UPDATE userblocks SET feature_id = $1 WHERE name = $2", [feature_id, name]
+      );
+      blockIDSUsed.push(freeblocks[i].id)
+      console.log(`scheduled Experiment: ${experiment.name} in block: ${name}`)
+    }
+    return freeblocks.filter( block => blockIDSUsed.includes(block.id))
+  } catch (error) {
+    console.log(`error scheduling Experiment with name ${experiment.name}`)
+    return false
+  } finally {
+    client.release();
+  }
+}
+  
+
+async function resetBlock(name) {
+  const client = await pgClient.connect();
+  try {
+    await client.query(
+      "UPDATE userblocks SET feature_id = null WHERE name = $1", [name]
+    );
+  } catch (error) {
+    console.log(`error reseting userblock with name ${name}`)
+    return false
   } finally {
     client.release();
   }
