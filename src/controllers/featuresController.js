@@ -17,21 +17,148 @@ async function getFeatures(req, res) {
     let featuresArr = response.rows.map(exp => {
       return new Feature(exp);
     })
-    // iterate over featureArr to tun into new feature objects
     for (let i = 0; i < featuresArr.length; i++) {
       let variants = await getVariants(featuresArr[i].id);
       if (variants === false) throw new Error("Error getting variants");
-      // console.log("variants", variants)
       featuresArr[i].variant_arr = variants.map(variant => {
         return new Variant(variant);
       });
     }
 
-    // console.log("List of features passed back", featuresArr);
     res.status(200).json(featuresArr);
   } catch (error) {
     res.status(403).json("Error getting the feature in postgres");
     console.log(error.stack);
+  } finally {
+    client.release();
+  }
+}
+
+async function getCurrentFeatures(req, res) {
+  const client = await pgClient.connect();
+  try {
+    let response = await client.query(
+      "SELECT * FROM features WHERE start_date <= CURRENT_DATE AND end_date >= CURRENT_DATE"
+    );
+    let featuresArr = response.rows.map(exp => {
+      return new Feature(exp);
+    })
+    for (let i = 0; i < featuresArr.length; i++) {
+      let variants = await getVariants(featuresArr[i].id);
+      if (variants === false) throw new Error("Error getting variants");
+      featuresArr[i].variant_arr = variants.map(variant => {
+        return new Variant(variant);
+      });
+    }
+
+    let currentExperiments = featuresArr.filter( obj => obj.type_id === 3)
+    console.log("before update")
+    await updateUserBlocks(currentExperiments)
+    console.log("after update")
+
+    let userblocks = await client.query(
+      "SELECT * FROM userblocks"
+    );
+    userblocks = userblocks.rows
+    let currentExperimentObj = {experiments: currentExperiments, userblocks}
+
+    res.status(200).json(currentExperimentObj);
+  } catch (error) {
+    res.status(403).json("Error getting the feature in postgres");
+    console.log(error.stack);
+  } finally {
+    client.release();
+  }
+}
+
+async function updateUserBlocks(currentExperiments) {
+  let currentExperimentIDs = currentExperiments.map( obj => obj.id)
+  const client = await pgClient.connect();
+  try {
+    let response = await client.query(
+      "SELECT * FROM userblocks"
+    );
+    let userblocks = response.rows
+    let oldblocks = []
+    let scheduledIDs = []
+    let freeblocks = []
+
+    userblocks.forEach( block=> {
+      if (block.feature_id === null) {
+        freeblocks.push(block)
+        return
+      }
+      if (!currentExperimentIDs.includes(block.feature_id)) {
+        oldblocks.push(block)
+        return
+      }
+      scheduledIDs.push(block.feature_id)
+    })
+
+    for(let i = 0; i<oldblocks.length; i++) {
+      let block = oldblocks[i]
+      freeblocks.push (await resetBlock(block));
+    }
+
+    for(let i = 0; i< currentExperimentIDs.length; i ++) {
+      if (freeblocks.length === 0 ) throw new Error("overbooked experiments");
+      let experiment = currentExperiments[i]
+      let id = currentExperimentIDs[i]
+      if (scheduledIDs.includes(id)) continue
+      console.log("freeblocks before", freeblocks)
+      freeblocks = await scheduleExperiment(experiment, freeblocks)
+      console.log("freeblocks after", freeblocks)
+    }
+
+  } catch (error) {
+    console.log("error updating blocks")
+    return false
+  } finally {
+    client.release();
+  }
+}
+
+async function scheduleExperiment(experiment, freeblocks) {
+  let feature_id = experiment.id
+  let percentage = experiment.user_percentage
+  percentage *= 100
+  let percentFree = freeblocks.length * 5
+  percentage = Math.min(percentFree, percentage)
+  let blockIDSUsed = []
+  console.log("percentage", percentage)
+  const client = await pgClient.connect();
+  try {
+    let currentPercentage = 0
+    for(let i = 0; i < freeblocks.length; i++) {
+      if (currentPercentage >= percentage) break;
+      currentPercentage += 5;
+      let {id} = freeblocks[i]
+      await client.query(
+        "UPDATE userblocks SET feature_id = $1 WHERE id = $2", [feature_id, id]
+      );
+      blockIDSUsed.push(freeblocks[i].id)
+    }
+    console.log("currentPercentage", currentPercentage)
+    return freeblocks.filter( block => !blockIDSUsed.includes(block.id))
+  } catch (error) {
+    console.log(`error scheduling Experiment with name ${experiment.name}`)
+    return false
+  } finally {
+    client.release();
+  }
+}
+  
+
+async function resetBlock(block) {
+  let {name} = block
+  const client = await pgClient.connect();
+  try {
+    await client.query(
+      "UPDATE userblocks SET feature_id = null WHERE name = $1", [name]
+    );
+  } catch (error) {
+    console.log(`error reseting userblock with name ${name}`)
+    return false
   } finally {
     client.release();
   }
@@ -66,7 +193,6 @@ async function getVariants(feature_id) {
       "SELECT * FROM variants WHERE feature_id = $1", [feature_id]
     )
     let variant_arr = response.rows
-    // console.log(`Variants for feature ${feature_id}`, variant_arr)
     return variant_arr
   } catch (error) {
     console.log(error.stack);
@@ -116,7 +242,6 @@ async function createFeature(req, res) {
 
     allData = allData.rows[0];
     let newFeature = new Feature(allData);
-    // console.log("New feature passed back", newFeature);
     res.status(200).json(newFeature);
   } catch (error) {
     res.status(403).json("Error in creating the feature in postgres");
@@ -131,7 +256,7 @@ async function deleteFeature(req, res) {
 
   const client = await pgClient.connect();
   try {
-    const response = await client.query(
+    await client.query(
       "DELETE FROM features WHERE (id = $1)",
       [id]
     );
@@ -219,22 +344,17 @@ async function createVariant(obj) {
   }
 }
 
-async function updateVariants (req, res) {
-
-}
-
 async function deleteVariants (id) {
   const client = await pgClient.connect();
   try {
     await client.query("DELETE FROM variants WHERE feature_id = $1" , [id])
     return true
   } catch (error) {
-    // res.status(403).json("Error deleting the variants in postgres");
-    // console.log(error.stack);
+    console.log("Error deleting the variants in postgres")
     return false
   } finally {
     client.release();
   }
 }
 
-export { getFeatures, getFeatureByID, createFeature, updateFeature, deleteFeature, createVariants, getVariantsByExpID, updateVariants, deleteVariants };
+export { getFeatures, getFeatureByID, createFeature, updateFeature, deleteFeature, createVariants, getVariantsByExpID, deleteVariants, getCurrentFeatures };

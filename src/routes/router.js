@@ -6,9 +6,9 @@ import {
   updateFeature,
   deleteFeature,
   createVariants,
-  updateVariants,
   deleteVariants,
   getVariantsByExpID,
+  getCurrentFeatures,
 } from "../controllers/featuresController.js";
 import { createEvent, getEvents, getEventsForFeature, getEventData } from "../controllers/eventsController.js";
 import { getUsers, createUser, deleteUser } from "../controllers/usersController.js";
@@ -18,11 +18,12 @@ const router = express.Router();
 
 router.get("/api/feature", getFeatures);
 
+router.get("/api/feature/current", getCurrentFeatures);
+
 router.get("/api/feature/:id", getFeatureByID);
 
 router.post("/api/feature", createFeature);
 
-// dummy route
 router.put("/api/feature/:id", updateFeature);
 
 router.delete("/api/feature/:id", deleteFeature);
@@ -32,7 +33,7 @@ router.post("/api/feature/:id/variants", createVariants);
 router.get("/api/feature/:id/variants", getVariantsByExpID);
 
 // dummy route
-router.put("/api/feature/:id/variants", updateVariants);
+// router.put("/api/feature/:id/variants", updateVariants);
 
 // router.delete("/api/feature/:id/variants", deleteVariants);
 
