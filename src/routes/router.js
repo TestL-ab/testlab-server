@@ -6,7 +6,6 @@ import {
   updateFeature,
   deleteFeature,
   createVariants,
-  updateVariants,
   deleteVariants,
   getVariantsByExpID,
   getCurrentFeatures,
@@ -34,7 +33,7 @@ router.post("/api/feature/:id/variants", createVariants);
 router.get("/api/feature/:id/variants", getVariantsByExpID);
 
 // dummy route
-router.put("/api/feature/:id/variants", updateVariants);
+// router.put("/api/feature/:id/variants", updateVariants);
 
 // router.delete("/api/feature/:id/variants", deleteVariants);
 

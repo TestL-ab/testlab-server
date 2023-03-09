@@ -215,7 +215,6 @@ describe("Variants API", () => {
     newVariants.
     response = await supertest(app).post(`/api/feature/${testID}/variants`).send(newVariants);
     expect(response.status).toEqual(200);
-    // response = await supertest(app).get(`/api/feature/${"bad"}/variants`);
   })
 })
 

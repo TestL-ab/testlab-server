@@ -3,13 +3,6 @@ import config from "../utils/config.js";
 import { Variant } from "../models/feature.js";
 
 const pgClient = new pg.Pool({ database: config.PG_DATABASE });
-// const pgClient = new pg.Pool({
-//   host: config.PG_HOST,
-//   port: 5432,
-//   user: config.PG_USERNAME,
-//   password: config.PG_PASSWORD,
-//   database: config.PG_DATABASE,
-// });
 
 pgClient.on("error", (err, client) => {
   console.error("Unexpected error on idle client", err);
@@ -52,7 +45,7 @@ async function getEventsForFeature(req, res) {
 
 async function getEventData(req, res) {
   const client = await pgClient.connect();
-  const id = req.params.id; //feature id passed as param, not variantid
+  const id = req.params.id; //feature(aka experiment/toggle/rollout) id passed as param, not variantid
 
   try {
     let response = await client.query(

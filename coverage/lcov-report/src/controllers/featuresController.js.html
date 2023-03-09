@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">52.25% </span>
+                <span class="strong">52.01% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>116/222</span>
+                <span class='fraction'>116/223</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">57.14% </span>
+                <span class="strong">59.25% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>16/28</span>
+                <span class='fraction'>16/27</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">54.54% </span>
+                <span class="strong">54.27% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>108/198</span>
+                <span class='fraction'>108/199</span>
             </div>
         
             
@@ -422,14 +422,7 @@
 <a name='L357'></a><a href='#L357'>357</a>
 <a name='L358'></a><a href='#L358'>358</a>
 <a name='L359'></a><a href='#L359'>359</a>
-<a name='L360'></a><a href='#L360'>360</a>
-<a name='L361'></a><a href='#L361'>361</a>
-<a name='L362'></a><a href='#L362'>362</a>
-<a name='L363'></a><a href='#L363'>363</a>
-<a name='L364'></a><a href='#L364'>364</a>
-<a name='L365'></a><a href='#L365'>365</a>
-<a name='L366'></a><a href='#L366'>366</a>
-<a name='L367'></a><a href='#L367'>367</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L360'></a><a href='#L360'>360</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -624,7 +617,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">14x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">14x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -674,7 +666,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">72x</span>
 <span class="cline-any cline-yes">72x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">72x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
@@ -778,17 +769,12 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">42x</span>
 <span class="cline-any cline-yes">42x</span>
 <span class="cline-any cline-yes">42x</span>
 <span class="cline-any cline-yes">42x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">42x</span>
@@ -990,7 +976,6 @@ async function getVariants(feature_id) {
       "SELECT * FROM variants WHERE feature_id = $1", [feature_id]
     )
     let variant_arr = response.rows
-    // console.log(`Variants for feature ${feature_id}`, variant_arr)
     return variant_arr
   } catch (error) {
 <span class="cstat-no" title="statement not covered" >    console.log(error.stack);</span>
@@ -1040,7 +1025,6 @@ async function createFeature(req, res) {
 &nbsp;
     allData = allData.rows[0];
     let newFeature = new Feature(allData);
-    // console.log("New feature passed back", newFeature);
     res.status(200).json(newFeature);
   } catch (error) {
     res.status(403).json("Error in creating the feature in postgres");
@@ -1055,7 +1039,7 @@ async function deleteFeature(req, res) {
 &nbsp;
   const client = await pgClient.connect();
   try {
-    const response = await client.query(
+    await client.query(
       "DELETE FROM features WHERE (id = $1)",
       [id]
     );
@@ -1143,32 +1127,27 @@ async function createVariant(obj) {
   }
 }
 &nbsp;
-async function <span class="fstat-no" title="function not covered" >updateVariants </span>(req, res) {
-&nbsp;
-}
-&nbsp;
 async function deleteVariants (id) {
   const client = await pgClient.connect();
   try {
     await client.query("DELETE FROM variants WHERE feature_id = $1" , [id])
     return true
   } catch (error) {
-    // res.status(403).json("Error deleting the variants in postgres");
-    // console.log(error.stack);
+<span class="cstat-no" title="statement not covered" >    console.log("Error deleting the variants in postgres")</span>
 <span class="cstat-no" title="statement not covered" >    return false</span>
   } finally {
     client.release();
   }
 }
 &nbsp;
-export { getFeatures, getFeatureByID, createFeature, updateFeature, deleteFeature, createVariants, getVariantsByExpID, updateVariants, deleteVariants, getCurrentFeatures };</pre></td></tr></table></pre>
+export { getFeatures, getFeatureByID, createFeature, updateFeature, deleteFeature, createVariants, getVariantsByExpID, deleteVariants, getCurrentFeatures };</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
             </div><!-- /wrapper -->
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2023-03-09T21:24:27.174Z
+                at 2023-03-09T21:37:20.845Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

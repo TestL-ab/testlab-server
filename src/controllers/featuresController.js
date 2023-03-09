@@ -193,7 +193,6 @@ async function getVariants(feature_id) {
       "SELECT * FROM variants WHERE feature_id = $1", [feature_id]
     )
     let variant_arr = response.rows
-    // console.log(`Variants for feature ${feature_id}`, variant_arr)
     return variant_arr
   } catch (error) {
     console.log(error.stack);
@@ -243,7 +242,6 @@ async function createFeature(req, res) {
 
     allData = allData.rows[0];
     let newFeature = new Feature(allData);
-    // console.log("New feature passed back", newFeature);
     res.status(200).json(newFeature);
   } catch (error) {
     res.status(403).json("Error in creating the feature in postgres");
@@ -258,7 +256,7 @@ async function deleteFeature(req, res) {
 
   const client = await pgClient.connect();
   try {
-    const response = await client.query(
+    await client.query(
       "DELETE FROM features WHERE (id = $1)",
       [id]
     );
@@ -346,22 +344,17 @@ async function createVariant(obj) {
   }
 }
 
-async function updateVariants (req, res) {
-
-}
-
 async function deleteVariants (id) {
   const client = await pgClient.connect();
   try {
     await client.query("DELETE FROM variants WHERE feature_id = $1" , [id])
     return true
   } catch (error) {
-    // res.status(403).json("Error deleting the variants in postgres");
-    // console.log(error.stack);
+    console.log("Error deleting the variants in postgres")
     return false
   } finally {
     client.release();
   }
 }
 
-export { getFeatures, getFeatureByID, createFeature, updateFeature, deleteFeature, createVariants, getVariantsByExpID, updateVariants, deleteVariants, getCurrentFeatures };
+export { getFeatures, getFeatureByID, createFeature, updateFeature, deleteFeature, createVariants, getVariantsByExpID, deleteVariants, getCurrentFeatures };
