@@ -316,3 +316,26 @@ describe("Events API", () => {
     expect(response.status).toEqual(200);
   })
 })
+
+describe("Userblocks API", () => {
+  test("get userblock", async () => {
+    response = await supertest(app).get(`/api/userblocks`)
+    expect(response.status).toEqual(200);
+  })
+
+  test("error set userblock", async () => {
+    response = await supertest(app).put(`/api/userblocks`).send({
+      "feature_id": "63",
+      "name": "4" 
+  })
+    expect(response.status).toEqual(403);
+  })
+
+  test("error set userblock", async () => {
+    response = await supertest(app).put(`/api/userblocks`).send({
+      "feature_id": "63",
+      "name": "5" 
+  })
+    expect(response.status).toEqual(200);
+  })
+})

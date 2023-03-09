@@ -30,13 +30,18 @@ async function setUserBlock(req, res) {
   console.log("featureID", feature_id)
   const client = await pgClient.connect();
   try {
-    const response = await client.query(
-      "SELECT * FROM userblocks"
+    let response = await client.query(
+      "UPDATE userblocks SET feature_id = $1 WHERE name = $2", [feature_id, name]
     );
-    let blocks = response.rows
-    res.status(200).json(blocks);
+    response = await client.query(
+      "SELECT * FROM userblocks WHERE name = $1", [name]
+    )
+    let block = response.rows[0]
+    // console.log("block ---------", block)
+    if (!block) throw new Error("No userblocks with that name")
+    res.status(200).json(block);
   } catch (error) {
-    res.status(403).json("Error in getting userblocks in postgres");
+    res.status(403).json(`Error in updating userblock with name ${name} in postgres`);
     console.log(error.stack);
   } finally {
     client.release();
