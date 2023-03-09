@@ -33,7 +33,7 @@ router.get("/api/feature/:id/variants", getVariantsByExpID);
 // dummy route
 router.put("/api/feature/:id/variants", updateVariants);
 
-router.delete("/api/feature/:id/variants", deleteVariants);
+// router.delete("/api/feature/:id/variants", deleteVariants);
 
 router.post("/api/events", createEvent);
 
