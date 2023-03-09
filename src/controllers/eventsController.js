@@ -102,8 +102,6 @@ async function getEventData(req, res) {
 async function createEvent(req, res) {
   const { variant_id, user_id } = req.body;
 
-  console.log("req body", req.body);
-
   const client = await pgClient.connect();
   try {
     const response = await client.query(
