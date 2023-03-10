@@ -53,9 +53,7 @@ async function getCurrentFeatures(req, res) {
     let currentToggles = featuresArr.filter( obj => obj.type_id === 1)
     let currentRollouts = featuresArr.filter( obj => obj.type_id === 2)
     let currentExperiments = featuresArr.filter( obj => obj.type_id === 3) 
-    console.log("before update")
     await updateUserBlocks(currentExperiments)
-    console.log("after update")
 
     let userblocks = await client.query(
       "SELECT * FROM userblocks"
@@ -156,6 +154,7 @@ async function resetBlock(block) {
     await client.query(
       "UPDATE userblocks SET feature_id = null WHERE name = $1", [name]
     );
+    return block
   } catch (error) {
     console.log(`error reseting userblock with name ${name}`)
     return false

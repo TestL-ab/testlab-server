@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">86.36% </span>
+                <span class="strong">34.09% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>38/44</span>
+                <span class='fraction'>15/44</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>4/4</span>
+                <span class='fraction'>0/4</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">80% </span>
+                <span class="strong">40% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>4/5</span>
+                <span class='fraction'>2/5</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">85.71% </span>
+                <span class="strong">35.71% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>36/42</span>
+                <span class='fraction'>15/42</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line high'></div>
+    <div class='status-line low'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -158,20 +158,20 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -192,23 +192,23 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -241,21 +241,21 @@ pgClient.on("error", <span class="fstat-no" title="function not covered" >(e</sp
 <span class="cstat-no" title="statement not covered" >  process.exit(-1);</span>
 });
 &nbsp;
-async function getUserblockByName(req, res) {
-  const name = req.params.name;
-  const client = await pgClient.connect();
-  try {
-    const response = await client.query(
+async function <span class="fstat-no" title="function not covered" >getUserblockByName(</span>req, res) {
+  const name = <span class="cstat-no" title="statement not covered" >req.params.name;</span>
+  const client = <span class="cstat-no" title="statement not covered" >await pgClient.connect();</span>
+<span class="cstat-no" title="statement not covered" >  try {</span>
+    const response = <span class="cstat-no" title="statement not covered" >await client.query(</span>
       "SELECT * FROM userblocks WHERE name = $1", [name]
     );
-    let block = response.rows[0]
-    if (!block) throw new Error("No userblocks with that name")
-    res.status(200).json(block);
+    let block = <span class="cstat-no" title="statement not covered" >response.rows[0]</span>
+<span class="cstat-no" title="statement not covered" >    if (!block) <span class="cstat-no" title="statement not covered" >throw new Error("No userblocks with that name")</span></span>
+<span class="cstat-no" title="statement not covered" >    res.status(200).json(block);</span>
   } catch (error) {
-    res.status(403).json("Error in getting userblocks in postgres");
-    console.log(error.stack);
+<span class="cstat-no" title="statement not covered" >    res.status(403).json("Error in getting userblocks in postgres");</span>
+<span class="cstat-no" title="statement not covered" >    console.log(error.stack);</span>
   } finally {
-    client.release();
+<span class="cstat-no" title="statement not covered" >    client.release();</span>
   }
 }
 &nbsp;
@@ -275,24 +275,24 @@ async function getUserblocks(req, res) {
   }
 }
 &nbsp;
-async function setUserBlock(req, res) {
-  const {feature_id, name} = req.body
-  const client = await pgClient.connect();
-  try {
-    let response = await client.query(
+async function <span class="fstat-no" title="function not covered" >setUserBlock(</span>req, res) {
+  const {feature_id, name} = <span class="cstat-no" title="statement not covered" >req.body</span>
+  const client = <span class="cstat-no" title="statement not covered" >await pgClient.connect();</span>
+<span class="cstat-no" title="statement not covered" >  try {</span>
+    let response = <span class="cstat-no" title="statement not covered" >await client.query(</span>
       "UPDATE userblocks SET feature_id = $1 WHERE name = $2", [feature_id, name]
     );
-    response = await client.query(
+<span class="cstat-no" title="statement not covered" >    response = await client.query(</span>
       "SELECT * FROM userblocks WHERE name = $1", [name]
     )
-    let block = response.rows[0]
-    if (!block) throw new Error("No userblocks with that name")
-    res.status(200).json(block);
+    let block = <span class="cstat-no" title="statement not covered" >response.rows[0]</span>
+<span class="cstat-no" title="statement not covered" >    if (!block) <span class="cstat-no" title="statement not covered" >throw new Error("No userblocks with that name")</span></span>
+<span class="cstat-no" title="statement not covered" >    res.status(200).json(block);</span>
   } catch (error) {
-    res.status(403).json(`Error in updating userblock with name ${name} in postgres`);
-    console.log(error.stack);
+<span class="cstat-no" title="statement not covered" >    res.status(403).json(`Error in updating userblock with name ${name} in postgres`);</span>
+<span class="cstat-no" title="statement not covered" >    console.log(error.stack);</span>
   } finally {
-    client.release();
+<span class="cstat-no" title="statement not covered" >    client.release();</span>
   }
 }
 &nbsp;
@@ -322,7 +322,7 @@ export { getUserblocks, setUserBlock, resetUserBlock, getUserblockByName };</pre
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2023-03-09T21:44:52.552Z
+                at 2023-03-10T23:46:52.512Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
