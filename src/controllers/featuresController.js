@@ -351,10 +351,15 @@ async function createVariant(obj) {
 async function deleteVariants (id) {
   const client = await pgClient.connect();
   try {
+    let response = await client.query(
+      "SELECT * FROM features WHERE id = $1", [id]
+    );
+    let features = response.rows
+    if (features.length === 0) throw new Error("No Feature with that name.")
     await client.query("DELETE FROM variants WHERE feature_id = $1" , [id])
     return true
   } catch (error) {
-    console.log("Error deleting the variants in postgres")
+    console.log(error)
     return false
   } finally {
     client.release();

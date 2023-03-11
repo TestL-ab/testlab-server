@@ -1,4 +1,4 @@
-import { scheduleExperiment, createVariant } from "./featuresController";
+import { scheduleExperiment, createVariant, deleteVariants } from "./featuresController";
 
 describe("testing some loner functions from features Controller", () => {
   test("scheduleExperiment", async () => {
@@ -21,5 +21,9 @@ describe("testing some loner functions from features Controller", () => {
       "feature_id" : -1,
       "value": "red"
     })).toEqual(false)
+  })
+
+  test("create variant error with feature id", async () => {
+    expect( await deleteVariants(-1)).toEqual(false)
   })
 })
