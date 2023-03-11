@@ -124,6 +124,9 @@ async function scheduleExperiment(experiment, freeblocks) {
   let blockIDSUsed = []
   const client = await pgClient.connect();
   try {
+    if (feature_id === undefined || percentage === undefined) {
+      throw new Error("experiment doesn't have correct properties.")
+    }
     let currentPercentage = 0
     for(let i = 0; i < freeblocks.length; i++) {
       if (currentPercentage >= percentage) break;
@@ -136,7 +139,7 @@ async function scheduleExperiment(experiment, freeblocks) {
     }
     return freeblocks.filter( block => !blockIDSUsed.includes(block.id))
   } catch (error) {
-    console.log(`error scheduling Experiment with name ${experiment.name}`)
+    console.log(error)
     return false
   } finally {
     client.release();
@@ -351,4 +354,4 @@ async function deleteVariants (id) {
   }
 }
 
-export { getFeatures, getFeatureByID, createFeature, updateFeature, deleteFeature, createVariants, getVariantsByExpID, deleteVariants, getCurrentFeatures };
+export { getFeatures, getFeatureByID, createFeature, updateFeature, deleteFeature, createVariants, getVariantsByExpID, deleteVariants, getCurrentFeatures, scheduleExperiment};
