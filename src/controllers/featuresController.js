@@ -327,15 +327,22 @@ async function createVariants(req, res) {
 async function createVariant(obj) {
   if (obj.weight === undefined) obj.weight = 0.5
   if (obj.is_control === undefined) obj.is_control = false
+  if (obj.value === undefined) obj.value = "undefined value"
   const client = await pgClient.connect();
   try {
-    const response = await client.query(
+    let response = await client.query(
+      "SELECT * FROM features WHERE id = $1", [obj.feature_id]
+    );
+    let features = response.rows
+    if (features.length === 0) throw new Error("No Feature with that name.")
+    await client.query(
       "INSERT INTO variants (feature_id, value, is_control, weight) VALUES ($1, $2, $3, $4)", [obj.feature_id, obj.value, obj.is_control, obj.weight]
     );
 
     return;
   } catch (error) {
-    throw new Error("Error creating Variant")
+    console.log(error);
+    return false
   } finally {
     client.release();
   }
@@ -354,4 +361,4 @@ async function deleteVariants (id) {
   }
 }
 
-export { getFeatures, getFeatureByID, createFeature, updateFeature, deleteFeature, createVariants, getVariantsByExpID, deleteVariants, getCurrentFeatures, scheduleExperiment};
+export { getFeatures, getFeatureByID, createFeature, updateFeature, deleteFeature, createVariants, getVariantsByExpID, deleteVariants, getCurrentFeatures, scheduleExperiment, createVariant};
