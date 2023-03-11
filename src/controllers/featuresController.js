@@ -104,9 +104,7 @@ async function updateUserBlocks(currentExperiments) {
       let experiment = currentExperiments[i]
       let id = currentExperimentIDs[i]
       if (scheduledIDs.includes(id)) continue
-      console.log("freeblocks before", freeblocks)
       freeblocks = await scheduleExperiment(experiment, freeblocks)
-      console.log("freeblocks after", freeblocks)
     }
 
   } catch (error) {
@@ -124,7 +122,6 @@ async function scheduleExperiment(experiment, freeblocks) {
   let percentFree = freeblocks.length * 5
   percentage = Math.min(percentFree, percentage)
   let blockIDSUsed = []
-  console.log("percentage", percentage)
   const client = await pgClient.connect();
   try {
     let currentPercentage = 0
@@ -137,7 +134,6 @@ async function scheduleExperiment(experiment, freeblocks) {
       );
       blockIDSUsed.push(freeblocks[i].id)
     }
-    console.log("currentPercentage", currentPercentage)
     return freeblocks.filter( block => !blockIDSUsed.includes(block.id))
   } catch (error) {
     console.log(`error scheduling Experiment with name ${experiment.name}`)

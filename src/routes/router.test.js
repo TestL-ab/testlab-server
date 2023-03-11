@@ -123,19 +123,45 @@ describe("Features API", () => {
     expect(response.status).toEqual(200);
   })
 
-  // let userblockOld = {
-  //   "feature_id": "86",
-  //   "name": "10" 
-  // }
+  let userblockOld = {
+    "feature_id": "86",
+    "name": "10" 
+  }
 
-  // test( "testing old blocks removed", async () => {
-  //   response = await supertest(app).put(`/api/userblocks/reset`);
-  //   response = await supertest(app).get(`/api/userblocks`);
-  //   let blocks = response.body.filter(block => block.feature_id === null)
-  //   expect(blocks.length).toEqual(20)
-  //   response = await supertest(app).get(`/api/feature/current`);
-  //   expect(response.status).toEqual(200);
-  // })
+  test( "testing old blocks removed", async () => {
+    response = await supertest(app).put(`/api/userblocks/reset`);
+
+    response = await supertest(app).put(`/api/userblocks`).send(userblockOld);
+    response = await supertest(app).get(`/api/userblocks`);
+    let blocks = response.body.filter(block => block.feature_id === 86)
+    expect(blocks.length).toEqual(1)
+    expect(blocks[0].name).toEqual("10")
+
+    response = await supertest(app).get(`/api/feature/current`);
+    expect(response.status).toEqual(200);
+    response = await supertest(app).get(`/api/userblocks`);
+    blocks = response.body.filter(block => block.feature_id === 86)
+    expect(blocks.length).toEqual(0)
+  })
+
+  test( "testing starting from having scheduled userblocks", async () => {
+    response = await supertest(app).get(`/api/feature/current`);
+    response = await supertest(app).get(`/api/feature/current`);
+    expect(response.status).toEqual(200);
+  })
+
+  test( "testing overscheduling", async () => {
+    response = await supertest(app).post("/api/feature").send(newFeature);
+    response = await supertest(app).get(`/api/feature/current`);
+    expect(response.status).toEqual(200);
+  })
+
+  test( "testing overscheduling with block that can't fit", async () => {
+    newFeature.
+    response = await supertest(app).post("/api/feature").send(newFeature);
+    response = await supertest(app).get(`/api/feature/current`);
+    expect(response.status).toEqual(200);
+  })
 
   // test( "testing Create feature", async () => {
   //   response = await supertest(app).post("/api/feature").send(newFeature);
