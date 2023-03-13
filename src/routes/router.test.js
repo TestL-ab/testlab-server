@@ -82,6 +82,8 @@ afterEach( async() => {
   await supertest(app).delete(`/api/feature/${testID}`)
   await supertest(app).delete(`/api/feature/${testID2}`)
   await supertest(app).delete(`/api/users/${testUserID}`)
+  jest.resetModules();
+  jest.clearAllMocks();
 })
 
 describe("Features API", () => {
@@ -465,6 +467,16 @@ describe("testing 304 last modified", () => {
     const lastModified = response.get('Last-Modified');
 
     response = await supertest(app).get(`/api/feature/${testID}/variants`)
+    .set('If-Modified-Since', lastModified);
+  
+    expect(response.status).toBe(304);
+  })
+
+  test("last modified mixing 304", async () => {
+    response = await supertest(app).get(`/api/feature/${testID}/variants`);
+    const lastModified = response.get('Last-Modified');
+
+    response = await supertest(app).get(`/api/feature/current`)
     .set('If-Modified-Since', lastModified);
   
     expect(response.status).toBe(304);
