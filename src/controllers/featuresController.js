@@ -43,6 +43,11 @@ async function getFeatures(req, res) {
 }
 
 async function getCurrentFeatures(req, res) {
+  res.set('Last-Modified', lastModified.toUTCString());
+  const ifModifiedSince = req.headers['if-modified-since'];
+  if (ifModifiedSince && new Date(ifModifiedSince).getTime() >= lastModified.getTime()) {
+    return res.status(304).end();
+  }
   const client = await pgClient.connect();
   try {
     let response = await client.query(
@@ -171,6 +176,11 @@ async function resetBlock(block) {
 }
 
 async function getFeatureByID(req, res) {
+  res.set('Last-Modified', lastModified.toUTCString());
+  const ifModifiedSince = req.headers['if-modified-since'];
+  if (ifModifiedSince && new Date(ifModifiedSince).getTime() >= lastModified.getTime()) {
+    return res.status(304).end();
+  }
   const id = req.params.id;
   const client = await pgClient.connect();
   try {
@@ -209,6 +219,11 @@ async function getVariants(feature_id) {
 }
 
 async function getVariantsByExpID(req, res) {
+  res.set('Last-Modified', lastModified.toUTCString());
+  const ifModifiedSince = req.headers['if-modified-since'];
+  if (ifModifiedSince && new Date(ifModifiedSince).getTime() >= lastModified.getTime()) {
+    return res.status(304).end();
+  }
   const id = req.params.id;
   const client = await pgClient.connect();
   try {

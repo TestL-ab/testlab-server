@@ -440,11 +440,31 @@ describe("testing 304 last modified", () => {
     expect(response.status).toBe(304);
   })
 
-  test("last modified get Features 304", async () => {
-    response = await supertest(app).get("/api/feature");
+  test("last modified get current Features 304", async () => {
+    response = await supertest(app).get("/api/feature/current");
     const lastModified = response.get('Last-Modified');
 
-    response = await supertest(app).get("/api/feature")
+    response = await supertest(app).get("/api/feature/current")
+    .set('If-Modified-Since', lastModified);
+  
+    expect(response.status).toBe(304);
+  })
+
+  test("last modified getFeatureByID 304", async () => {
+    response = await supertest(app).get(`/api/feature/${testID}`);
+    const lastModified = response.get('Last-Modified');
+
+    response = await supertest(app).get(`/api/feature/${testID}`)
+    .set('If-Modified-Since', lastModified);
+  
+    expect(response.status).toBe(304);
+  })
+
+  test("last modified getVariantsByExpID 304", async () => {
+    response = await supertest(app).get(`/api/feature/${testID}/variants`);
+    const lastModified = response.get('Last-Modified');
+
+    response = await supertest(app).get(`/api/feature/${testID}/variants`)
     .set('If-Modified-Since', lastModified);
   
     expect(response.status).toBe(304);
