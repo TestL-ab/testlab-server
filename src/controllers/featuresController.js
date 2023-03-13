@@ -2,6 +2,8 @@ import pg from "pg";
 import config from "../utils/config.js";
 import { Feature, Variant } from "../models/feature.js";
 
+let lastModified;
+
 const pgClient = new pg.Pool({ database: config.PG_DATABASE });
 pgClient.on("error", (err, client) => {
   console.error("Unexpected error on idle client", err);
@@ -221,6 +223,7 @@ async function getVariantsByExpID(req, res) {
 }
 
 async function createFeature(req, res) {
+  lastModified = Date.now()
   let { name, type_id, start_date, end_date, is_running, user_percentage, description } = req.body;
   if (is_running === undefined) is_running = false;
   if (user_percentage === undefined) user_percentage = 1;
@@ -284,6 +287,9 @@ async function updateFeature(req, res) {
     newFeature.variant_arr = variants.map(variant => {
       return new Variant(variant);
     });
+
+    lastModified = Date.now()
+    
     res.status(200).json(newFeature);
   } catch (error) {
     await client.query("DELETE FROM variants WHERE feature_id = $1", [id])
@@ -309,6 +315,8 @@ async function createVariants(req, res) {
     const response = await client.query(
       "SELECT * from variants WHERE feature_id = $1", [id]
     );
+
+    lastModified = Date.now()
 
     let addVariants = response.rows
     let weightSum = addVariants.reduce( (t,v) => t+Number(v.weight), 0)
@@ -338,6 +346,8 @@ async function createVariant(obj) {
     await client.query(
       "INSERT INTO variants (feature_id, value, is_control, weight) VALUES ($1, $2, $3, $4)", [obj.feature_id, obj.value, obj.is_control, obj.weight]
     );
+
+    lastModified = Date.now()
 
     return;
   } catch (error) {
