@@ -2,7 +2,7 @@ import pg from "pg";
 import config from "../utils/config.js";
 import { Feature, Variant } from "../models/feature.js";
 
-let lastModified;
+let lastModified = new Date();;
 
 const pgClient = new pg.Pool({ database: config.PG_DATABASE });
 pgClient.on("error", (err, client) => {
@@ -11,6 +11,12 @@ pgClient.on("error", (err, client) => {
 });
 
 async function getFeatures(req, res) {
+  res.set('Last-Modified', lastModified.toUTCString());
+  const ifModifiedSince = req.headers['if-modified-since'];
+  if (ifModifiedSince && new Date(ifModifiedSince).getTime() >= lastModified.getTime()) {
+    return res.status(304).end();
+  }
+
   const client = await pgClient.connect();
   try {
     const response = await client.query(
@@ -223,7 +229,7 @@ async function getVariantsByExpID(req, res) {
 }
 
 async function createFeature(req, res) {
-  lastModified = Date.now()
+  lastModified = new Date();
   let { name, type_id, start_date, end_date, is_running, user_percentage, description } = req.body;
   if (is_running === undefined) is_running = false;
   if (user_percentage === undefined) user_percentage = 1;
@@ -261,6 +267,9 @@ async function deleteFeature(req, res) {
       "DELETE FROM features WHERE (id = $1)",
       [id]
     );
+    
+    lastModified = new Date();
+
     res.status(200).json(`feature with id ${id} successfully deleted.`)
   } catch (error) {
     res.status(400).json("Error in deleting the feature in postgres");
@@ -288,8 +297,8 @@ async function updateFeature(req, res) {
       return new Variant(variant);
     });
 
-    lastModified = Date.now()
-    
+    lastModified = new Date();
+
     res.status(200).json(newFeature);
   } catch (error) {
     await client.query("DELETE FROM variants WHERE feature_id = $1", [id])
@@ -316,7 +325,7 @@ async function createVariants(req, res) {
       "SELECT * from variants WHERE feature_id = $1", [id]
     );
 
-    lastModified = Date.now()
+    lastModified = new Date();
 
     let addVariants = response.rows
     let weightSum = addVariants.reduce( (t,v) => t+Number(v.weight), 0)
@@ -347,7 +356,7 @@ async function createVariant(obj) {
       "INSERT INTO variants (feature_id, value, is_control, weight) VALUES ($1, $2, $3, $4)", [obj.feature_id, obj.value, obj.is_control, obj.weight]
     );
 
-    lastModified = Date.now()
+    lastModified = new Date();
 
     return;
   } catch (error) {
@@ -367,6 +376,9 @@ async function deleteVariants (id) {
     let features = response.rows
     if (features.length === 0) throw new Error("No Feature with that name.")
     await client.query("DELETE FROM variants WHERE feature_id = $1" , [id])
+    
+    lastModified = new Date();
+    
     return true
   } catch (error) {
     console.log(error)
