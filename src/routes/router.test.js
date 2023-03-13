@@ -13,6 +13,7 @@ let variant1ID
 let variant2ID
 let variants
 let testNewEvent
+let lastModified
 
 beforeEach( async() => {
   testFeature1 = {
@@ -431,8 +432,21 @@ describe("Userblocks API", () => {
 describe("testing 304 last modified", () => {
   test("last modified get Features 304", async () => {
     response = await supertest(app).get("/api/feature");
-    expect(response.status).toEqual(200);
-    expect(Array.isArray(response.body)).toBeTruthy();
-    expect(response.body.length >= 1).toBe(true);
+    const lastModified = response.get('Last-Modified');
+
+    response = await supertest(app).get("/api/feature")
+    .set('If-Modified-Since', lastModified);
+  
+    expect(response.status).toBe(304);
+  })
+
+  test("last modified get Features 304", async () => {
+    response = await supertest(app).get("/api/feature");
+    const lastModified = response.get('Last-Modified');
+
+    response = await supertest(app).get("/api/feature")
+    .set('If-Modified-Since', lastModified);
+  
+    expect(response.status).toBe(304);
   })
 })
