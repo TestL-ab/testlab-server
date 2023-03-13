@@ -427,3 +427,12 @@ describe("Userblocks API", () => {
     expect(response.body.feature_id).toEqual(null)
   })
 })
+
+describe("testing 304 last modified", () => {
+  test("last modified get Features 304", async () => {
+    response = await supertest(app).get("/api/feature");
+    expect(response.status).toEqual(200);
+    expect(Array.isArray(response.body)).toBeTruthy();
+    expect(response.body.length >= 1).toBe(true);
+  })
+})
