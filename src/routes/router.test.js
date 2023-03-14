@@ -13,6 +13,7 @@ let variant1ID
 let variant2ID
 let variants
 let testNewEvent
+let lastModified
 
 beforeEach( async() => {
   testFeature1 = {
@@ -81,6 +82,8 @@ afterEach( async() => {
   await supertest(app).delete(`/api/feature/${testID}`)
   await supertest(app).delete(`/api/feature/${testID2}`)
   await supertest(app).delete(`/api/users/${testUserID}`)
+  jest.resetModules();
+  jest.clearAllMocks();
 })
 
 describe("Features API", () => {
@@ -425,5 +428,57 @@ describe("Userblocks API", () => {
     expect(response.status).toEqual(200);
     response = await supertest(app).get(`/api/userblocks/5`)
     expect(response.body.feature_id).toEqual(null)
+  })
+})
+
+describe("testing 304 last modified", () => {
+  test("last modified get Features 304", async () => {
+    response = await supertest(app).get("/api/feature");
+    const lastModified = response.get('Last-Modified');
+
+    response = await supertest(app).get("/api/feature")
+    .set('If-Modified-Since', lastModified);
+  
+    expect(response.status).toBe(304);
+  })
+
+  test("last modified get current Features 304", async () => {
+    response = await supertest(app).get("/api/feature/current");
+    const lastModified = response.get('Last-Modified');
+
+    response = await supertest(app).get("/api/feature/current")
+    .set('If-Modified-Since', lastModified);
+  
+    expect(response.status).toBe(304);
+  })
+
+  test("last modified getFeatureByID 304", async () => {
+    response = await supertest(app).get(`/api/feature/${testID}`);
+    const lastModified = response.get('Last-Modified');
+
+    response = await supertest(app).get(`/api/feature/${testID}`)
+    .set('If-Modified-Since', lastModified);
+  
+    expect(response.status).toBe(304);
+  })
+
+  test("last modified getVariantsByExpID 304", async () => {
+    response = await supertest(app).get(`/api/feature/${testID}/variants`);
+    const lastModified = response.get('Last-Modified');
+
+    response = await supertest(app).get(`/api/feature/${testID}/variants`)
+    .set('If-Modified-Since', lastModified);
+  
+    expect(response.status).toBe(304);
+  })
+
+  test("last modified mixing 304", async () => {
+    response = await supertest(app).get(`/api/feature/${testID}/variants`);
+    const lastModified = response.get('Last-Modified');
+
+    response = await supertest(app).get(`/api/feature/current`)
+    .set('If-Modified-Since', lastModified);
+  
+    expect(response.status).toBe(304);
   })
 })

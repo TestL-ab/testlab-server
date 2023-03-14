@@ -2,6 +2,8 @@ import pg from "pg";
 import config from "../utils/config.js";
 import { Feature, Variant } from "../models/feature.js";
 
+let lastModified = new Date();;
+
 const pgClient = new pg.Pool({ database: config.PG_DATABASE });
 pgClient.on("error", (err, client) => {
   console.error("Unexpected error on idle client", err);
@@ -9,6 +11,8 @@ pgClient.on("error", (err, client) => {
 });
 
 async function getFeatures(req, res) {
+  res.set('Last-Modified', lastModified.toUTCString());
+
   const client = await pgClient.connect();
   try {
     const response = await client.query(
@@ -35,6 +39,8 @@ async function getFeatures(req, res) {
 }
 
 async function getCurrentFeatures(req, res) {
+  res.set('Last-Modified', lastModified.toUTCString());
+
   const client = await pgClient.connect();
   try {
     let response = await client.query(
@@ -163,6 +169,8 @@ async function resetBlock(block) {
 }
 
 async function getFeatureByID(req, res) {
+  res.set('Last-Modified', lastModified.toUTCString());
+
   const id = req.params.id;
   const client = await pgClient.connect();
   try {
@@ -201,6 +209,8 @@ async function getVariants(feature_id) {
 }
 
 async function getVariantsByExpID(req, res) {
+  res.set('Last-Modified', lastModified.toUTCString());
+
   const id = req.params.id;
   const client = await pgClient.connect();
   try {
@@ -221,6 +231,7 @@ async function getVariantsByExpID(req, res) {
 }
 
 async function createFeature(req, res) {
+  lastModified = new Date();
   let { name, type_id, start_date, end_date, is_running, user_percentage, description } = req.body;
   if (is_running === undefined) is_running = false;
   if (user_percentage === undefined) user_percentage = 1;
@@ -258,6 +269,9 @@ async function deleteFeature(req, res) {
       "DELETE FROM features WHERE (id = $1)",
       [id]
     );
+    
+    lastModified = new Date();
+
     res.status(200).json(`feature with id ${id} successfully deleted.`)
   } catch (error) {
     res.status(400).json("Error in deleting the feature in postgres");
@@ -284,6 +298,9 @@ async function updateFeature(req, res) {
     newFeature.variant_arr = variants.map(variant => {
       return new Variant(variant);
     });
+
+    lastModified = new Date();
+
     res.status(200).json(newFeature);
   } catch (error) {
     await client.query("DELETE FROM variants WHERE feature_id = $1", [id])
@@ -309,6 +326,8 @@ async function createVariants(req, res) {
     const response = await client.query(
       "SELECT * from variants WHERE feature_id = $1", [id]
     );
+
+    lastModified = new Date();
 
     let addVariants = response.rows
     let weightSum = addVariants.reduce( (t,v) => t+Number(v.weight), 0)
@@ -339,6 +358,8 @@ async function createVariant(obj) {
       "INSERT INTO variants (feature_id, value, is_control, weight) VALUES ($1, $2, $3, $4)", [obj.feature_id, obj.value, obj.is_control, obj.weight]
     );
 
+    lastModified = new Date();
+
     return;
   } catch (error) {
     console.log(error);
@@ -357,6 +378,9 @@ async function deleteVariants (id) {
     let features = response.rows
     if (features.length === 0) throw new Error("No Feature with that name.")
     await client.query("DELETE FROM variants WHERE feature_id = $1" , [id])
+    
+    lastModified = new Date();
+    
     return true
   } catch (error) {
     console.log(error)
