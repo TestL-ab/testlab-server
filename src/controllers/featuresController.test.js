@@ -1,4 +1,4 @@
-import { scheduleExperiment, createVariant, deleteVariants } from "./featuresController";
+import { scheduleExperiment, createVariant, deleteVariants, pgClient } from "./featuresController";
 
 describe("testing some loner functions from features Controller", () => {
   test("scheduleExperiment", async () => {
