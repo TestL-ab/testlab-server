@@ -31,7 +31,7 @@ async function getEventsForFeature(req, res) {
   // this is why we use a join
   try {
     const response = await client.query(
-      "SELECT * FROM events INNER JOIN variants ON events.variant_id = variants.id WHERE variants.feature_id = $1",
+      "SELECT e.id as event_id, e.variant_id, e.user_id, e.time_stamp, v.feature_id, v.value, v.is_control, v.weight FROM events AS e INNER JOIN variants AS v ON e.variant_id = v.id WHERE v.feature_id = $1",
       [id]
     );
     let eventsArr = response.rows;

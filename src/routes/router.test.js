@@ -290,7 +290,7 @@ describe("Variants API", () => {
 describe("User API", () => {
 
   let testUser = {
-    "id": "62",
+    "id": "72",
     "variant_id": 0,
     "ip_address": "192.168.101.20"
   }
