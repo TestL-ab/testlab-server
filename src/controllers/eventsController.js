@@ -26,7 +26,9 @@ async function getEvents(req, res) {
 
 async function getEventsForFeature(req, res) {
   const client = await pgClient.connect();
-  const id = req.params.id; //feature id; event table does not have feature id column
+  const id = req.params.id; //feature id
+  // Note that the event table has a variant not feature id
+  // this is why we use a join
   try {
     const response = await client.query(
       "SELECT * FROM events INNER JOIN variants ON events.variant_id = variants.id WHERE variants.feature_id = $1",
