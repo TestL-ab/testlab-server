@@ -31,7 +31,7 @@ async function getFeatures(req, res) {
 
     res.status(200).json(featuresArr);
   } catch (error) {
-    res.status(403).json("Error getting the feature in postgres");
+    res.status(403).json("Error getting the features in postgres");
     console.log(error.stack);
   } finally {
     client.release();
@@ -69,7 +69,7 @@ async function getCurrentFeatures(req, res) {
 
     res.status(200).json(currentObj);
   } catch (error) {
-    res.status(403).json("Error getting the feature in postgres");
+    res.status(403).json("Error getting the features in postgres");
     console.log(error.stack);
   } finally {
     client.release();
