@@ -86,7 +86,7 @@ async function getEventData(req, res) {
 
     res.status(200).json(event_data);
   } catch (error) {
-    res.status(403).json("Error getting the events in postgres");
+    res.status(403).json("Error getting the analysis in postgres");
     console.log(error.stack);
   } finally {
     client.release();

@@ -274,7 +274,7 @@ async function deleteFeature(req, res) {
 
     res.status(200).json(`feature with id ${id} successfully deleted.`)
   } catch (error) {
-    res.status(400).json("Error in deleting the feature in postgres");
+    res.status(403).json("Error in deleting the feature in postgres");
     console.log(error.stack);
   } finally {
     client.release();
