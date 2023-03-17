@@ -1,7 +1,14 @@
 import pg from "pg";
 import config from "../utils/config.js";
 
-const pgClient = new pg.Pool({ database: config.PG_DATABASE });
+//const pgClient = new pg.Pool({ database: config.PG_DATABASE });
+const pgClient = new pg.Pool({
+  host: config.PG_HOST,
+  port: 5432,
+  user: config.PG_USERNAME,
+  password: config.PG_PASSWORD,
+  database: config.PG_DATABASE,
+});
 
 pgClient.on("error", (err, client) => {
   console.error("Unexpected error on idle client", err);
@@ -25,7 +32,7 @@ async function getUsers(req, res) {
 
 async function createUser(req, res) {
   const { id, variant_id, ip_address } = req.body;
-  console.log("inputs", id, variant_id, ip_address)
+  console.log("inputs", id, variant_id, ip_address);
 
   const client = await pgClient.connect();
   try {
@@ -53,10 +60,7 @@ async function deleteUser(req, res) {
   const id = req.params.id;
   const client = await pgClient.connect();
   try {
-    await client.query(
-      "DELETE FROM users WHERE id =$1",
-      [id]
-    );
+    await client.query("DELETE FROM users WHERE id =$1", [id]);
 
     res.status(200).json(`User with id ${id} was deleted`);
   } catch (error) {

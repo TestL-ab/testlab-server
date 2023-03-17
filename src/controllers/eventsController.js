@@ -2,7 +2,14 @@ import pg from "pg";
 import config from "../utils/config.js";
 import { Variant } from "../models/feature.js";
 
-const pgClient = new pg.Pool({ database: config.PG_DATABASE });
+//const pgClient = new pg.Pool({ database: config.PG_DATABASE });
+const pgClient = new pg.Pool({
+  host: config.PG_HOST,
+  port: 5432,
+  user: config.PG_USERNAME,
+  password: config.PG_PASSWORD,
+  database: config.PG_DATABASE,
+});
 
 pgClient.on("error", (err, client) => {
   console.error("Unexpected error on idle client", err);
@@ -51,35 +58,40 @@ async function getEventData(req, res) {
     let response = await client.query(
       "SELECT * FROM variants WHERE variants.feature_id = $1",
       [id]
-    )
-    
-    let variantArr = response.rows.map(variant => {
+    );
+
+    let variantArr = response.rows.map((variant) => {
       return new Variant(variant);
     });
 
-    let event_data = []
-    for (let i=0; i<variantArr.length; i++) {
-      let variant = variantArr[i]
-      let variant_id = variant.id
+    let event_data = [];
+    for (let i = 0; i < variantArr.length; i++) {
+      let variant = variantArr[i];
+      let variant_id = variant.id;
       response = await client.query(
-        "SELECT COUNT(id) as event_total FROM events WHERE variant_id = $1", [variant_id]
-      )
-      let event_total = Number(response.rows[0].event_total)
+        "SELECT COUNT(id) as event_total FROM events WHERE variant_id = $1",
+        [variant_id]
+      );
+      let event_total = Number(response.rows[0].event_total);
       response = await client.query(
-        "SELECT COUNT( DISTINCT user_id) as distinct_user_events_total FROM events WHERE variant_id = $1", [variant_id]
-      )
-      let distinct_user_events_total = Number(response.rows[0].distinct_user_events_total)
+        "SELECT COUNT( DISTINCT user_id) as distinct_user_events_total FROM events WHERE variant_id = $1",
+        [variant_id]
+      );
+      let distinct_user_events_total = Number(
+        response.rows[0].distinct_user_events_total
+      );
       response = await client.query(
-        "SELECT COUNT(id) as total_users FROM users WHERE variant_id = $1", [variant_id]
-      )
+        "SELECT COUNT(id) as total_users FROM users WHERE variant_id = $1",
+        [variant_id]
+      );
 
-      let total_users = Number(response.rows[0].total_users)
+      let total_users = Number(response.rows[0].total_users);
       event_data.push({
         ...variant,
         event_total,
         distinct_user_events_total,
-        total_users
-      })
+        total_users,
+      });
     }
 
     res.status(200).json(event_data);
@@ -90,7 +102,6 @@ async function getEventData(req, res) {
     client.release();
   }
 }
-
 
 async function createEvent(req, res) {
   const { variant_id, user_id } = req.body;
