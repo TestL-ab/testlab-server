@@ -182,7 +182,7 @@ describe("Features API", () => {
     await supertest(app).delete(`/api/feature/${testID}`)
   })
 
-  test( "creating an expirment that already exists", async () => {
+  test( "creating an experiment that already exists", async () => {
     response = await supertest(app).post("/api/feature").send(newFeature);
     let testID = response.body.id
     response = await supertest(app).post("/api/feature").send(newFeature);
@@ -208,7 +208,7 @@ describe("Features API", () => {
 
   test( "test error delete feature", async () => {
     response = await supertest(app).delete(`/api/feature/${"bad"}`)
-    expect(response.status).toEqual(400);
+    expect(response.status).toEqual(403);
   })
 
   test( "testing creating feature with defaults", async () => {
@@ -290,7 +290,7 @@ describe("Variants API", () => {
 describe("User API", () => {
 
   let testUser = {
-    "id": "62",
+    "id": "72",
     "variant_id": 0,
     "ip_address": "192.168.101.20"
   }

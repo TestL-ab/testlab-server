@@ -31,7 +31,7 @@ async function getFeatures(req, res) {
 
     res.status(200).json(featuresArr);
   } catch (error) {
-    res.status(403).json("Error getting the feature in postgres");
+    res.status(403).json("Error getting the features in postgres");
     console.log(error.stack);
   } finally {
     client.release();
@@ -69,7 +69,7 @@ async function getCurrentFeatures(req, res) {
 
     res.status(200).json(currentObj);
   } catch (error) {
-    res.status(403).json("Error getting the feature in postgres");
+    res.status(403).json("Error getting the features in postgres");
     console.log(error.stack);
   } finally {
     client.release();
@@ -274,7 +274,7 @@ async function deleteFeature(req, res) {
 
     res.status(200).json(`feature with id ${id} successfully deleted.`)
   } catch (error) {
-    res.status(400).json("Error in deleting the feature in postgres");
+    res.status(403).json("Error in deleting the feature in postgres");
     console.log(error.stack);
   } finally {
     client.release();

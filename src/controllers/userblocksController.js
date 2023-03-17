@@ -19,7 +19,7 @@ async function getUserblockByName(req, res) {
     if (!block) throw new Error("No userblocks with that name")
     res.status(200).json(block);
   } catch (error) {
-    res.status(403).json("Error in getting userblocks in postgres");
+    res.status(403).json("Error in getting userblock in postgres");
     console.log(error.stack);
   } finally {
     client.release();

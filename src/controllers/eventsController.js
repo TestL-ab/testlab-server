@@ -26,10 +26,12 @@ async function getEvents(req, res) {
 
 async function getEventsForFeature(req, res) {
   const client = await pgClient.connect();
-  const id = req.params.id; //feature id; event table does not have feature id column
+  const id = req.params.id; //feature id
+  // Note that the event table has a variant not feature id
+  // this is why we use a join
   try {
     const response = await client.query(
-      "SELECT * FROM events INNER JOIN variants ON events.variant_id = variants.id WHERE variants.feature_id = $1",
+      "SELECT e.id as event_id, e.variant_id, e.user_id, e.time_stamp, v.feature_id, v.value, v.is_control, v.weight FROM events AS e INNER JOIN variants AS v ON e.variant_id = v.id WHERE v.feature_id = $1",
       [id]
     );
     let eventsArr = response.rows;
@@ -84,7 +86,7 @@ async function getEventData(req, res) {
 
     res.status(200).json(event_data);
   } catch (error) {
-    res.status(403).json("Error getting the events in postgres");
+    res.status(403).json("Error getting the analysis in postgres");
     console.log(error.stack);
   } finally {
     client.release();
