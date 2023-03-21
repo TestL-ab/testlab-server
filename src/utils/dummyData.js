@@ -33,7 +33,7 @@ const makeData = async (num) => {
     date.setHours(date.getHours() + hours * randomNum); // add random hour within interval
     const newTimestamp = date.toISOString(); // convert to ISO format
     // do this part between 1 and 5 times (randomly)
-    let randomUserEventCount = Math.random() * 5;
+    let randomUserEventCount = Math.floor(Math.random() * 3);
     for (let i = 0; i <= randomUserEventCount; i++) {
       let newEvent = {
         variant_id: variants[variantId],
