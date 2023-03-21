@@ -2,11 +2,11 @@ import axios from "axios";
 const baseUrl = "http://localhost:3000/api";
 import { v4 } from "uuid";
 
-const variants = [1, 2]; // Variant ids that must exist in the feature database
+const variants = [16, 17]; // Variant ids that must exist in the feature database
 const weights = [0.5, 0.5]; // Weight for each id -- total 1.0
 const interval = 30; // Days experiment will run
 const hours = interval * 24;
-const numData = 10; // Number of data points to generate
+const numData = 100; // Number of data points to generate
 
 const getVariant = (randomNum) => {
   let runningTotal = 0;
@@ -32,17 +32,31 @@ const makeData = async (num) => {
     const date = new Date(); // current timestamp
     date.setHours(date.getHours() + hours * randomNum); // add random hour within interval
     const newTimestamp = date.toISOString(); // convert to ISO format
-
-    let newEvent = {
-      variant_id: variants[variantId],
-      user_id: newUser.id,
-      time_stamp: newTimestamp,
-    };
-    console.log(newEvent);
-
-    let test = await createEvent(newEvent);
+    // do this part between 1 and 5 times (randomly)
+    let randomUserEventCount = Math.random() * 5;
+    for (let i = 0; i <= randomUserEventCount; i++) {
+      let newEvent = {
+        variant_id: variants[variantId],
+        user_id: newUser.id,
+        time_stamp: newTimestamp,
+      };
+      console.log(newEvent);
+  
+      let test = await createEvent(newEvent);
+    }
   }
+  //   let newEvent = {
+  //     variant_id: variants[variantId],
+  //     user_id: newUser.id,
+  //     time_stamp: newTimestamp,
+  //   };
+  //   console.log(newEvent);
+
+  //   let test = await createEvent(newEvent);
+  // }
 };
+
+
 
 const createUser = async ({ id, variant_id, ip_address }) => {
   try {
