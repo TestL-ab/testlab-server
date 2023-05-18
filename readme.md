@@ -1,4 +1,6 @@
-To set up database:
+### To set up database:
 createdb TestLab (one time)
 psql -d TestLab < schema.sql
 
+### run tests
+npm test
