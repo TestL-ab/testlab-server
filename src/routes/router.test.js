@@ -281,7 +281,6 @@ describe("Variants API", () => {
   test( "update variant", async () => {
     newVariants.variants.forEach(variant => variant.feature_id = testID)
     response = await supertest(app).post(`/api/feature/${testID}/variants`).send(newVariants);
-    newVariants.
     response = await supertest(app).post(`/api/feature/${testID}/variants`).send(newVariants);
     expect(response.status).toEqual(200);
   })
