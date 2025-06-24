@@ -4,7 +4,13 @@ import { Feature, Variant } from "../models/feature.js";
 
 let lastModified = new Date();;
 
-const pgClient = new pg.Pool({ database: config.PG_DATABASE });
+const pgClient = new pg.Pool({ 
+  database: config.PG_DATABASE,
+  host: config.PG_HOST,
+  user: config.PG_USERNAME,
+  password: config.PG_PASSWORD
+});
+
 pgClient.on("error", (err, client) => {
   console.error("Unexpected error on idle client", err);
   process.exit(-1);
