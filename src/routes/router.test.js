@@ -1,5 +1,6 @@
 import supertest from "supertest";
 import app from "../app.js"
+import { clearTestDatabase, closeTestDbPool } from "../../test/db-helper.js";
 
 let testFeature1
 let testFeature2
@@ -14,6 +15,21 @@ let variant2ID
 let variants
 let testNewEvent
 let lastModified
+
+// Set up test database before all tests
+beforeAll(async () => {
+  // Clear the test database to start fresh
+  await clearTestDatabase();
+});
+
+// Clean up after all tests
+afterAll(async () => {
+  // Close test database pool
+  await closeTestDbPool();
+  
+  // Give a moment for any remaining connections to close
+  await new Promise(resolve => setTimeout(resolve, 100));
+}, 10000); // 10 second timeout for cleanup
 
 beforeEach( async() => {
   testFeature1 = {
@@ -57,6 +73,7 @@ beforeEach( async() => {
 
   testNewEvent = {}
 
+  // Now enable database setup for integration tests
   response = await supertest(app).post("/api/feature").send(testFeature1);
   testID = response.body.id
   response = await supertest(app).post("/api/feature").send(testFeature2);
@@ -79,12 +96,21 @@ beforeEach( async() => {
 })
 
 afterEach( async() => {
+  // Clean up test data after each test
   await supertest(app).delete(`/api/feature/${testID}`)
   await supertest(app).delete(`/api/feature/${testID2}`)
   await supertest(app).delete(`/api/users/${testUserID}`)
   jest.resetModules();
   jest.clearAllMocks();
 })
+
+describe("Basic App Tests", () => {
+  test("app loads successfully", async () => {
+    // Simple test to verify the Express app loads without database calls
+    expect(app).toBeDefined();
+    expect(typeof app).toBe('function');
+  });
+});
 
 describe("Features API", () => {
   let newFeature = {
@@ -96,11 +122,19 @@ describe("Features API", () => {
     "user_percentage": 0.5
   }
 
-  test( "testing get all feature", async () => {
+  test("testing get all feature", async () => {
+    // First create a test feature so we have data to retrieve
+    const createResponse = await supertest(app).post("/api/feature").send(newFeature);
+    expect(createResponse.status).toEqual(200);
+    
+    // Now test getting all features
     response = await supertest(app).get("/api/feature");
     expect(response.status).toEqual(200);
     expect(Array.isArray(response.body)).toBeTruthy();
     expect(response.body.length >= 1).toBe(true);
+    
+    // Clean up the created feature
+    await supertest(app).delete(`/api/feature/${createResponse.body.id}`);
   })
 
   test( "testing get feature by id", async () => {
@@ -229,7 +263,7 @@ describe("Features API", () => {
     testID2Obj = {...testID2Obj, id: testID2}
     response = await supertest(app).put(`/api/feature/${testID2}`).send(testID2Obj);
     expect(response.status).toEqual(200)
-    expect(response.body.name === "purple")
+    expect(response.body.name).toBe("purple")
   })
 });
 
@@ -281,6 +315,7 @@ describe("Variants API", () => {
   test( "update variant", async () => {
     newVariants.variants.forEach(variant => variant.feature_id = testID)
     response = await supertest(app).post(`/api/feature/${testID}/variants`).send(newVariants);
+    newVariants.
     response = await supertest(app).post(`/api/feature/${testID}/variants`).send(newVariants);
     expect(response.status).toEqual(200);
   })
