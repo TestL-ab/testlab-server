@@ -5,8 +5,10 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-
-    "test": "jest --forceExit --coverage",
+    "test": "npm run test:db:setup && jest --coverage --detectOpenHandles",
+    "test:db:setup": "node scripts/test-db.js setup",
+    "test:db:teardown": "node scripts/test-db.js teardown",
+    "test:unit": "jest --coverage --testPathIgnorePatterns=integration --detectOpenHandles",
     "start": "nodemon --exec babel-node src/index.js"
   },
   "author": "",
