@@ -1,3 +1,4 @@
+import { describe, it, expect, beforeAll, afterAll, beforeEach, afterEach } from 'vitest';
 import supertest from "supertest";
 import app from "../app.js"
 import { clearTestDatabase, closeTestDbPool } from "../../test/db-helper.js";
@@ -100,12 +101,10 @@ afterEach( async() => {
   await supertest(app).delete(`/api/feature/${testID}`)
   await supertest(app).delete(`/api/feature/${testID2}`)
   await supertest(app).delete(`/api/users/${testUserID}`)
-  jest.resetModules();
-  jest.clearAllMocks();
 })
 
 describe("Basic App Tests", () => {
-  test("app loads successfully", async () => {
+  it("app loads successfully", async () => {
     // Simple test to verify the Express app loads without database calls
     expect(app).toBeDefined();
     expect(typeof app).toBe('function');
@@ -122,7 +121,7 @@ describe("Features API", () => {
     "user_percentage": 0.5
   }
 
-  test("testing get all feature", async () => {
+  it("testing get all feature", async () => {
     // First create a test feature so we have data to retrieve
     const createResponse = await supertest(app).post("/api/feature").send(newFeature);
     expect(createResponse.status).toEqual(200);
@@ -137,17 +136,17 @@ describe("Features API", () => {
     await supertest(app).delete(`/api/feature/${createResponse.body.id}`);
   })
 
-  test( "testing get feature by id", async () => {
+  it( "testing get feature by id", async () => {
     response = await supertest(app).get(`/api/feature/${testID}`);
     expect(response.status).toEqual(200);
   })
 
-  test( "testing error get feature by id", async () => {
+  it( "testing error get feature by id", async () => {
     response = await supertest(app).get(`/api/feature/${"bad"}`);
     expect(response.status).toEqual(403);
   })
 
-  test( "testing get current features", async () => {
+  it( "testing get current features", async () => {
     response = await supertest(app).get(`/api/feature/current`);
     expect(response.status).toEqual(200);
     expect(Array.isArray(response.body.experiments)).toEqual(true)
@@ -156,7 +155,7 @@ describe("Features API", () => {
     expect(Array.isArray(response.body.userblocks)).toEqual(true)
   })
 
-  test( "testing starting from empty userblocks", async () => {
+  it( "testing starting from empty userblocks", async () => {
     response = await supertest(app).put(`/api/userblocks/reset`);
     response = await supertest(app).get(`/api/userblocks`);
     let blocks = response.body.filter(block => block.feature_id === null)
@@ -170,7 +169,7 @@ describe("Features API", () => {
     "name": "10" 
   }
 
-  test( "testing old blocks removed", async () => {
+  it( "testing old blocks removed", async () => {
     response = await supertest(app).put(`/api/userblocks/reset`);
 
     response = await supertest(app).put(`/api/userblocks`).send(userblockOld);
@@ -186,13 +185,13 @@ describe("Features API", () => {
     expect(blocks.length).toEqual(0)
   })
 
-  test( "testing starting from having scheduled userblocks", async () => {
+  it( "testing starting from having scheduled userblocks", async () => {
     response = await supertest(app).get(`/api/feature/current`);
     response = await supertest(app).get(`/api/feature/current`);
     expect(response.status).toEqual(200);
   })
 
-  test( "testing overscheduling", async () => {
+  it( "testing overscheduling", async () => {
     response = await supertest(app).post("/api/feature").send(newFeature);
     let testID = response.body.id
     response = await supertest(app).get(`/api/feature/current`);
@@ -200,7 +199,7 @@ describe("Features API", () => {
     await supertest(app).delete(`/api/feature/${testID}`)
   })
 
-  test( "testing overscheduling with block that can't fit", async () => {
+  it( "testing overscheduling with block that can't fit", async () => {
     response = await supertest(app).post("/api/feature").send(newFeature);
     let testID = response.body.id
     response = await supertest(app).get(`/api/feature/current`);
@@ -208,7 +207,7 @@ describe("Features API", () => {
     await supertest(app).delete(`/api/feature/${testID}`)
   })
 
-  test( "testing Create feature", async () => {
+  it( "testing Create feature", async () => {
     response = await supertest(app).post("/api/feature").send(newFeature);
     expect(response.status).toEqual(200);
     expect(response.body.name).toEqual("new_test_feature");
@@ -216,7 +215,7 @@ describe("Features API", () => {
     await supertest(app).delete(`/api/feature/${testID}`)
   })
 
-  test( "creating an experiment that already exists", async () => {
+  it( "creating an experiment that already exists", async () => {
     response = await supertest(app).post("/api/feature").send(newFeature);
     let testID = response.body.id
     response = await supertest(app).post("/api/feature").send(newFeature);
@@ -225,7 +224,7 @@ describe("Features API", () => {
     await supertest(app).delete(`/api/feature/${testID}`)
   })
 
-  test( "testing delete feature", async () => {
+  it( "testing delete feature", async () => {
     response = await supertest(app).post("/api/feature").send(newFeature);
     let testID = response.body.id
 
@@ -240,12 +239,12 @@ describe("Features API", () => {
     ).toBe(0)
   })
 
-  test( "test error delete feature", async () => {
+  it( "test error delete feature", async () => {
     response = await supertest(app).delete(`/api/feature/${"bad"}`)
     expect(response.status).toEqual(403);
   })
 
-  test( "testing creating feature with defaults", async () => {
+  it( "testing creating feature with defaults", async () => {
     delete newFeature.is_running
     delete newFeature.user_percentage
 
@@ -256,7 +255,7 @@ describe("Features API", () => {
     await supertest(app).delete(`/api/feature/${testID}`)
   })
 
-  test( "update feature", async () => {
+  it( "update feature", async () => {
     let response = await supertest(app).get(`/api/feature/${testID2}`);
     let testID2Obj = response.body
     testID2Obj.name = "purple"
@@ -268,13 +267,13 @@ describe("Features API", () => {
 });
 
 describe("Variants API", () => {
-  test( "testing error when adding variant where feature Id of variants doesn't match param id", async () => {
+  it( "testing error when adding variant where feature Id of variants doesn't match param id", async () => {
     response = await supertest(app).post(`/api/feature/${testID}/variants`).send(newVariants);
     expect(response.status).toEqual(403)
     expect(response.body).toEqual("Error in creating the variants in postgres")
   })
 
-  test( "testing error when varients weights don't sum to 1", async ()=> {
+  it( "testing error when varients weights don't sum to 1", async ()=> {
     newVariants.variants.forEach(variant => variant.feature_id = testID)
     newVariants.variants[0].weight = 0.4
     newVariants.variants[1].weight = 0.4
@@ -283,13 +282,13 @@ describe("Variants API", () => {
     expect(response.body).toEqual("Error in creating the variants in postgres")
   })
 
-  test( "testing varient defaults", async ()=> {
+  it( "testing varient defaults", async ()=> {
     newVariants.variants.forEach(variant => variant.feature_id = testID)
     response = await supertest(app).post(`/api/feature/${testID}/variants`).send(newVariants);
     expect(response.status).toEqual(200)
   })
 
-  test( "testing create variant" , async () => {
+  it( "testing create variant" , async () => {
     newVariants.variants.forEach(variant => variant.feature_id = testID)
     newVariants.variants[0].weight = 0.5
     newVariants.variants[1].weight = 0.5
@@ -299,7 +298,7 @@ describe("Variants API", () => {
     expect(Array.isArray(response.body)).toEqual(true)
   })
 
-  test( "get variant array", async () => {
+  it( "get variant array", async () => {
     newVariants.variants.forEach(variant => variant.feature_id = testID)
     response = await supertest(app).post(`/api/feature/${testID}/variants`).send(newVariants);
     response = await supertest(app).get(`/api/feature/${testID}/variants`);
@@ -307,12 +306,12 @@ describe("Variants API", () => {
     expect(Array.isArray(response.body)).toEqual(true);
   })
 
-  test( "test error getting variants by expID", async () => {
+  it( "test error getting variants by expID", async () => {
     response = await supertest(app).get(`/api/feature/${"bad"}/variants`);
     expect(response.status).toEqual(403);
   })
 
-  test( "update variant", async () => {
+  it( "update variant", async () => {
     newVariants.variants.forEach(variant => variant.feature_id = testID)
     response = await supertest(app).post(`/api/feature/${testID}/variants`).send(newVariants);
     response = await supertest(app).post(`/api/feature/${testID}/variants`).send(newVariants);
@@ -328,13 +327,13 @@ describe("User API", () => {
     "ip_address": "192.168.101.20"
   }
 
-  test( "get users", async () => {
+  it( "get users", async () => {
     response = await supertest(app).get(`/api/users`)
     expect(response.status).toEqual(200);
     expect(Array.isArray(response.body)).toBeTruthy();
   })
 
-  test( "create new user", async () => {
+  it( "create new user", async () => {
     newVariants.variants.forEach(variant => variant.feature_id = testID)
     response = await supertest(app).post(`/api/feature/${testID}/variants`).send(newVariants);
     response = await supertest(app).get(`/api/feature/${testID}/variants`);
@@ -348,12 +347,12 @@ describe("User API", () => {
     await supertest(app).delete(`/api/users/${userID}`)
   })
 
-  test( "create new user with bad data", async () => {
+  it( "create new user with bad data", async () => {
     response = await supertest(app).post("/api/users").send({id: 12});
     expect(response.status).toEqual(403);
   })
 
-  test("delete new user", async () => {
+  it("delete new user", async () => {
     testUser.variant_id = variant2ID
     response = await supertest(app).post("/api/users").send(testUser);
     expect(response.status).toEqual(200);
@@ -369,73 +368,73 @@ describe("Events API", () => {
     "variant_id": 14
   }
 
-  test("create event", async () => {
+  it("create event", async () => {
     newEvent.user_id = testUserID
     newEvent.variant_id = variant1ID
     response = await supertest(app).post(`/api/events`).send(newEvent)
     expect(response.status).toEqual(200);
   })
 
-  test("failing create event", async () => {
+  it("failing create event", async () => {
     response = await supertest(app).post(`/api/events`).send(newEvent)
     expect(response.status).toEqual(403);
   })
 
-  test("get events", async () => {
+  it("get events", async () => {
     response = await supertest(app).get(`/api/events`)
     expect(response.status).toEqual(200);
   })
 
-  test("Get events for feature", async () => {
+  it("Get events for feature", async () => {
     response = await supertest(app).get(`/api/feature/${testID2}`)
     expect(response.status).toEqual(200);
     expect(response.body.length > 0);
   })
 
-  test("failing Get events for feature", async () => {
+  it("failing Get events for feature", async () => {
     response = await supertest(app).get(`/api/feature/${0}`)
     expect(response.status).toEqual(403);
   })
 
-  test("get event data", async () => {
+  it("get event data", async () => {
     response = await supertest(app).get(`/api/analysis/feature/${testID2}`)
     expect(response.status).toEqual(200);
   })
 
-  test("get event data with bad feature Id", async () => {
+  it("get event data with bad feature Id", async () => {
     response = await supertest(app).get(`/api/analysis/feature/${"bad"}`)
     expect(response.status).toEqual(403);
   })
 
-  test("get events for feature with bad feature id", async () => {
+  it("get events for feature with bad feature id", async () => {
     response = await supertest(app).get(`/api/events/feature/${"bad"}`)
     expect(response.status).toEqual(403);
   })
 
-  test("get events for feature", async () => {
+  it("get events for feature", async () => {
     response = await supertest(app).get(`/api/events/feature/${testID2}`)
     expect(response.status).toEqual(200);
   })
 })
 
 describe("Userblocks API", () => {
-  test("get userblock", async () => {
+  it("get userblock", async () => {
     response = await supertest(app).get(`/api/userblocks`)
     expect(response.status).toEqual(200);
   })
 
-  test("get userblock by name", async () => {
+  it("get userblock by name", async () => {
     response = await supertest(app).get(`/api/userblocks/20`)
     expect(response.status).toEqual(200);
     expect(response.body.id).toEqual(4)
   })
 
-  test("error get userblock by name", async () => {
+  it("error get userblock by name", async () => {
     response = await supertest(app).get(`/api/userblocks/23`)
     expect(response.status).toEqual(403);
   })
 
-  test("error set userblock", async () => {
+  it("error set userblock", async () => {
     response = await supertest(app).put(`/api/userblocks`).send({
       "feature_id": "63",
       "name": "4" 
@@ -443,7 +442,7 @@ describe("Userblocks API", () => {
     expect(response.status).toEqual(403);
   })
 
-  test("set userblock", async () => {
+  it("set userblock", async () => {
     response = await supertest(app).put(`/api/userblocks`).send({
       "feature_id": "63",
       "name": "5" 
@@ -452,7 +451,7 @@ describe("Userblocks API", () => {
     expect(response.body.feature_id).toEqual(63)
   })
 
-  test("reset userblock", async () => {
+  it("reset userblock", async () => {
     response = await supertest(app).put(`/api/userblocks`).send({
       "feature_id": "63",
       "name": "5" 
@@ -465,7 +464,7 @@ describe("Userblocks API", () => {
 })
 
 describe("testing 304 last modified", () => {
-  test("last modified get Features 304", async () => {
+  it("last modified get Features 304", async () => {
     response = await supertest(app).get("/api/feature");
     const lastModified = response.get('Last-Modified');
 
@@ -475,7 +474,7 @@ describe("testing 304 last modified", () => {
     expect(response.status).toBe(304);
   })
 
-  test("last modified get current Features 304", async () => {
+  it("last modified get current Features 304", async () => {
     response = await supertest(app).get("/api/feature/current");
     const lastModified = response.get('Last-Modified');
 
@@ -485,7 +484,7 @@ describe("testing 304 last modified", () => {
     expect(response.status).toBe(304);
   })
 
-  test("last modified getFeatureByID 304", async () => {
+  it("last modified getFeatureByID 304", async () => {
     response = await supertest(app).get(`/api/feature/${testID}`);
     const lastModified = response.get('Last-Modified');
 
@@ -495,7 +494,7 @@ describe("testing 304 last modified", () => {
     expect(response.status).toBe(304);
   })
 
-  test("last modified getVariantsByExpID 304", async () => {
+  it("last modified getVariantsByExpID 304", async () => {
     response = await supertest(app).get(`/api/feature/${testID}/variants`);
     const lastModified = response.get('Last-Modified');
 
@@ -505,7 +504,7 @@ describe("testing 304 last modified", () => {
     expect(response.status).toBe(304);
   })
 
-  test("last modified mixing 304", async () => {
+  it("last modified mixing 304", async () => {
     response = await supertest(app).get(`/api/feature/${testID}/variants`);
     const lastModified = response.get('Last-Modified');
 
