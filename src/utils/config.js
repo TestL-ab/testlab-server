@@ -1,4 +1,4 @@
-import "dotenv/config.js";
+import "dotenv/config";
 
 const PORT = process.env.PORT;
 const PG_DATABASE = process.env.PG_DATABASE;

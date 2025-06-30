@@ -1,39 +1,45 @@
-import pg from 'pg';
+import { vi, describe, it, expect, beforeEach } from 'vitest';
 
-jest.mock('pg', () => {
-  const mPgClient = {
-    on: jest.fn(),
-    connect: jest.fn(),
-  };
-  const mPgPool = {
-    connect: jest.fn(() => mPgClient),
-    on: jest.fn(),
-  };
-  return {
-    default: {
-      Pool: jest.fn(() => mPgPool),
-    },
-    Pool: jest.fn(() => mPgPool),
-  };
-});
+// Mock pg before importing it - Vitest has stable mocking
+const mockPool = {
+  on: vi.fn(),
+  connect: vi.fn(),
+};
+
+const mockPgClient = {
+  on: vi.fn(),
+  connect: vi.fn(),
+};
+
+vi.mock('pg', () => ({
+  default: {
+    Pool: vi.fn(() => mockPool),
+  },
+}));
+
+// Import pg after mocking
+import pg from 'pg';
 
 describe('featuresController', () => {
   describe('database connection', () => {
+    beforeEach(() => {
+      vi.clearAllMocks();
+    });
+
     it('should handle PostgreSQL errors', async () => {
-      // Dynamically import the module to trigger the Pool creation
+      // Import the module to trigger the Pool creation
       await import('./featuresController.js');
       
       // The Pool should have been called during module load
       expect(pg.Pool).toHaveBeenCalled();
       
-      // Get the pool instance
-      const poolInstance = pg.Pool.mock.results[0].value;
-      expect(poolInstance.on).toHaveBeenCalledWith('error', expect.any(Function));
+      // Verify that error handler was set up
+      expect(mockPool.on).toHaveBeenCalledWith('error', expect.any(Function));
       
       // Test the error handler
-      const errorHandler = poolInstance.on.mock.calls[0][1];
-      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-      const exitSpy = jest.spyOn(process, 'exit').mockImplementation(() => {});
+      const errorHandler = mockPool.on.mock.calls.find(call => call[0] === 'error')[1];
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      const exitSpy = vi.spyOn(process, 'exit').mockImplementation(() => {});
       
       errorHandler(new Error('connection error'));
       
